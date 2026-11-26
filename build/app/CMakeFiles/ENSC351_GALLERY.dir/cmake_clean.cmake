@@ -1,5 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/ENSC351_GALLERY.dir/link.d"
+  "CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.o"
+  "CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.o.d"
   "CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.o"
   "CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.o.d"
   "CMakeFiles/ENSC351_GALLERY.dir/src/main.c.o"

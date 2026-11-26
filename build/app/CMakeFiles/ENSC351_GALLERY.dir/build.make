@@ -72,10 +72,24 @@ include app/CMakeFiles/ENSC351_GALLERY.dir/flags.make
 app/CMakeFiles/ENSC351_GALLERY.dir/codegen:
 .PHONY : app/CMakeFiles/ENSC351_GALLERY.dir/codegen
 
+app/CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.o: app/CMakeFiles/ENSC351_GALLERY.dir/flags.make
+app/CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.o: /home/maximus/repositories/ENSC_351_LaserGallery/app/src/audio.c
+app/CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.o: app/CMakeFiles/ENSC351_GALLERY.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/maximus/repositories/ENSC_351_LaserGallery/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object app/CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.o"
+	cd /home/maximus/repositories/ENSC_351_LaserGallery/build/app && aarch64-linux-gnu-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT app/CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.o -MF CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.o.d -o CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.o -c /home/maximus/repositories/ENSC_351_LaserGallery/app/src/audio.c
+
+app/CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.i"
+	cd /home/maximus/repositories/ENSC_351_LaserGallery/build/app && aarch64-linux-gnu-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/maximus/repositories/ENSC_351_LaserGallery/app/src/audio.c > CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.i
+
+app/CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.s"
+	cd /home/maximus/repositories/ENSC_351_LaserGallery/build/app && aarch64-linux-gnu-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/maximus/repositories/ENSC_351_LaserGallery/app/src/audio.c -o CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.s
+
 app/CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.o: app/CMakeFiles/ENSC351_GALLERY.dir/flags.make
 app/CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.o: /home/maximus/repositories/ENSC_351_LaserGallery/app/src/audioMixer.c
 app/CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.o: app/CMakeFiles/ENSC351_GALLERY.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/maximus/repositories/ENSC_351_LaserGallery/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object app/CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/maximus/repositories/ENSC_351_LaserGallery/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object app/CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.o"
 	cd /home/maximus/repositories/ENSC_351_LaserGallery/build/app && aarch64-linux-gnu-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT app/CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.o -MF CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.o.d -o CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.o -c /home/maximus/repositories/ENSC_351_LaserGallery/app/src/audioMixer.c
 
 app/CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.i: cmake_force
@@ -89,7 +103,7 @@ app/CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.s: cmake_force
 app/CMakeFiles/ENSC351_GALLERY.dir/src/main.c.o: app/CMakeFiles/ENSC351_GALLERY.dir/flags.make
 app/CMakeFiles/ENSC351_GALLERY.dir/src/main.c.o: /home/maximus/repositories/ENSC_351_LaserGallery/app/src/main.c
 app/CMakeFiles/ENSC351_GALLERY.dir/src/main.c.o: app/CMakeFiles/ENSC351_GALLERY.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/maximus/repositories/ENSC_351_LaserGallery/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object app/CMakeFiles/ENSC351_GALLERY.dir/src/main.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/maximus/repositories/ENSC_351_LaserGallery/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object app/CMakeFiles/ENSC351_GALLERY.dir/src/main.c.o"
 	cd /home/maximus/repositories/ENSC_351_LaserGallery/build/app && aarch64-linux-gnu-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT app/CMakeFiles/ENSC351_GALLERY.dir/src/main.c.o -MF CMakeFiles/ENSC351_GALLERY.dir/src/main.c.o.d -o CMakeFiles/ENSC351_GALLERY.dir/src/main.c.o -c /home/maximus/repositories/ENSC_351_LaserGallery/app/src/main.c
 
 app/CMakeFiles/ENSC351_GALLERY.dir/src/main.c.i: cmake_force
@@ -102,19 +116,21 @@ app/CMakeFiles/ENSC351_GALLERY.dir/src/main.c.s: cmake_force
 
 # Object files for target ENSC351_GALLERY
 ENSC351_GALLERY_OBJECTS = \
+"CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.o" \
 "CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.o" \
 "CMakeFiles/ENSC351_GALLERY.dir/src/main.c.o"
 
 # External object files for target ENSC351_GALLERY
 ENSC351_GALLERY_EXTERNAL_OBJECTS =
 
+app/ENSC351_GALLERY: app/CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.o
 app/ENSC351_GALLERY: app/CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.o
 app/ENSC351_GALLERY: app/CMakeFiles/ENSC351_GALLERY.dir/src/main.c.o
 app/ENSC351_GALLERY: app/CMakeFiles/ENSC351_GALLERY.dir/build.make
 app/ENSC351_GALLERY: app/CMakeFiles/ENSC351_GALLERY.dir/compiler_depend.ts
 app/ENSC351_GALLERY: hal/libhal.a
 app/ENSC351_GALLERY: app/CMakeFiles/ENSC351_GALLERY.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/maximus/repositories/ENSC_351_LaserGallery/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C executable ENSC351_GALLERY"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/maximus/repositories/ENSC_351_LaserGallery/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking C executable ENSC351_GALLERY"
 	cd /home/maximus/repositories/ENSC_351_LaserGallery/build/app && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/ENSC351_GALLERY.dir/link.txt --verbose=$(VERBOSE)
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold "Copying exec to public"
 	cd /home/maximus/repositories/ENSC_351_LaserGallery/build/app && /usr/bin/cmake -E copy /home/maximus/repositories/ENSC_351_LaserGallery/build/app/ENSC351_GALLERY /home/maximus/public/

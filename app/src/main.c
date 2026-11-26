@@ -2,6 +2,8 @@
 
 #include "LED_RINGS.h"
 #include "IR_receiver.h"
+#include "audioMixer.h"
+#include "audio.h"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -70,6 +72,10 @@ int main()
 
     //Init the gpiochup structure
 
+    audio_init();
+    AudioMixer_queueSound(&sounds[AUDIO_GAME_MUSIC]);
+    
+
     /*
     for( int i = 0; i < RINGS ; i++)
     {
@@ -88,10 +94,12 @@ int main()
 
         if( hit == P1_HIT)
         {
+            AudioMixer_queueSound(&sounds[AUDIO_MUMMY_HIT]);
             printf("PLAYER1 HIT\n");
         }
         else if( hit == P2_HIT)
         {
+            AudioMixer_queueSound(&sounds[AUDIO_JAR_HIT]);
             printf("PLAYER2 HIT\n");
         }
     }

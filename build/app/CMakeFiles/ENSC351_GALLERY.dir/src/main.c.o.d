@@ -113,4 +113,7 @@ app/CMakeFiles/ENSC351_GALLERY.dir/src/main.c.o: \
  /home/maximus/repositories/ENSC_351_LaserGallery/hal/include/gpio.h \
  /usr/include/gpiod.h \
  /usr/lib/gcc-cross/aarch64-linux-gnu/14/include/stdbool.h \
- /home/maximus/repositories/ENSC_351_LaserGallery/hal/include/LED_RINGS.h
+ /home/maximus/repositories/ENSC_351_LaserGallery/hal/include/LED_RINGS.h \
+ /home/maximus/repositories/ENSC_351_LaserGallery/app/include/audioMixer.h \
+ /home/maximus/repositories/ENSC_351_LaserGallery/app/include/audio.h \
+ /home/maximus/repositories/ENSC_351_LaserGallery/app/include/audioMixer.h

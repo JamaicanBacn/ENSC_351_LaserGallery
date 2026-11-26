@@ -4,6 +4,7 @@ ENSC351_GALLERY: \
   /usr/lib/gcc-cross/aarch64-linux-gnu/14/crtbeginS.o \
   /usr/lib/gcc-cross/aarch64-linux-gnu/14/libasan_preinit.o \
   /usr/lib/gcc-cross/aarch64-linux-gnu/14/libasan.so \
+  CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.o \
   CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.o \
   CMakeFiles/ENSC351_GALLERY.dir/src/main.c.o \
   /lib/aarch64-linux-gnu/libasound.so \
@@ -47,6 +48,8 @@ ENSC351_GALLERY: \
 /usr/lib/gcc-cross/aarch64-linux-gnu/14/libasan_preinit.o:
 
 /usr/lib/gcc-cross/aarch64-linux-gnu/14/libasan.so:
+
+CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.o:
 
 CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.o:
 

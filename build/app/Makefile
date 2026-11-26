@@ -130,6 +130,30 @@ ENSC351_GALLERY/fast:
 	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/build
 .PHONY : ENSC351_GALLERY/fast
 
+src/audio.o: src/audio.c.o
+.PHONY : src/audio.o
+
+# target to build an object file
+src/audio.c.o:
+	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.o
+.PHONY : src/audio.c.o
+
+src/audio.i: src/audio.c.i
+.PHONY : src/audio.i
+
+# target to preprocess a source file
+src/audio.c.i:
+	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.i
+.PHONY : src/audio.c.i
+
+src/audio.s: src/audio.c.s
+.PHONY : src/audio.s
+
+# target to generate assembly for a file
+src/audio.c.s:
+	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.s
+.PHONY : src/audio.c.s
+
 src/audioMixer.o: src/audioMixer.c.o
 .PHONY : src/audioMixer.o
 
@@ -187,6 +211,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... ENSC351_GALLERY"
+	@echo "... src/audio.o"
+	@echo "... src/audio.i"
+	@echo "... src/audio.s"
 	@echo "... src/audioMixer.o"
 	@echo "... src/audioMixer.i"
 	@echo "... src/audioMixer.s"
