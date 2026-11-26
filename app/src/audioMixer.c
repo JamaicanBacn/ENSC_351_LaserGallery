@@ -4,6 +4,9 @@
 #include "audioMixer.h"
 #include <alsa/asoundlib.h>
 #include <stdbool.h>
+#include <stdatomic.h>
+#include <stdint.h>
+#include <string.h>
 #include <pthread.h>
 #include <limits.h>
 #include <alloca.h> // needed for mixer
@@ -13,7 +16,7 @@ static snd_pcm_t *handle;
 
 #define DEFAULT_VOLUME 80
 
-#define SAMPLE_RATE 44100
+#define SAMPLE_RATE 48000
 #define NUM_CHANNELS 1
 #define SAMPLE_SIZE (sizeof(short)) 			// bytes per sample
 // Sample size note: This works for mono files because each sample ("frame') is 1 value.
@@ -39,7 +42,7 @@ static playbackSound_t soundBites[MAX_SOUND_BITES];
 
 // Playback threading
 void* playbackThread(void* arg);
-static _Bool stopping = false;
+static atomic_bool stopping;
 static pthread_t playbackThreadId;
 static pthread_mutex_t audioMutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -50,12 +53,8 @@ void AudioMixer_init(void)
 {
 	AudioMixer_setVolume(DEFAULT_VOLUME);
 
-	// Initialize the currently active sound-bites being played
-	// REVISIT:- Implement this. Hint: set the pSound pointer to NULL for each
-	//     sound bite.
-
-
-
+	memset(soundBites, 0, sizeof soundBites);
+	atomic_store(&stopping, false);
 
 	// Open the PCM output
 	int err = snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, 0);
@@ -86,48 +85,99 @@ void AudioMixer_init(void)
 	playbackBuffer = malloc(playbackBufferSize * sizeof(*playbackBuffer));
 
 	// Launch playback thread:
-	pthread_create(&playbackThreadId, NULL, playbackThread, NULL);
+	if (pthread_create(&playbackThreadId, NULL, playbackThread, NULL) != 0) {
+		fprintf(stderr, "Unable to start the audio playback thread.\n");
+		snd_pcm_close(handle);
+		free(playbackBuffer);
+		exit(EXIT_FAILURE);
+	}
 }
 
 
-// Client code must call AudioMixer_freeWaveFileData to free dynamically allocated data.
-void AudioMixer_readWaveFileIntoMemory(char *fileName, wavedata_t *pSound)
+static uint32_t read32le(const unsigned char *bytes)
 {
-	assert(pSound);
+    return (uint32_t)bytes[0] | (uint32_t)bytes[1] << 8
+        | (uint32_t)bytes[2] << 16 | (uint32_t)bytes[3] << 24;
+}
 
-	// The PCM data in a wave file starts after the header:
-	const int PCM_DATA_OFFSET = 44;
+// Find the PCM data by chunk so LIST and other metadata are skipped.
+int AudioMixer_readWaveFileIntoMemory(const char *fileName, wavedata_t *pSound)
+{
+    FILE *file = fopen(fileName, "rb");
+    if (file == NULL) {
+        perror(fileName);
+        return -1;
+    }
 
-	// Open the wave file
-	FILE *file = fopen(fileName, "r");
-	if (file == NULL) {
-		fprintf(stderr, "ERROR: Unable to open file %s.\n", fileName);
-		exit(EXIT_FAILURE);
-	}
+    unsigned char riff[12];
+    unsigned char chunk[8];
+    bool haveFormat = false;
+    unsigned int channels = 0;
 
-	// Get file size
-	fseek(file, 0, SEEK_END);
-	int sizeInBytes = ftell(file) - PCM_DATA_OFFSET;
-	pSound->numSamples = sizeInBytes / SAMPLE_SIZE;
+    if (fread(riff, 1, sizeof riff, file) != sizeof riff ||
+        memcmp(riff, "RIFF", 4) != 0 || memcmp(riff + 8, "WAVE", 4) != 0) {
+        goto invalid;
+    }
 
-	// Search to the start of the data in the file
-	fseek(file, PCM_DATA_OFFSET, SEEK_SET);
+    while (fread(chunk, 1, sizeof chunk, file) == sizeof chunk) {
+        uint32_t size = read32le(chunk + 4);
+        if (memcmp(chunk, "fmt ", 4) == 0) {
+            unsigned char format[16];
+            if (size < sizeof format ||
+                fread(format, 1, sizeof format, file) != sizeof format) {
+                goto invalid;
+            }
 
-	// Allocate space to hold all PCM data
-	pSound->pData = malloc(sizeInBytes);
-	if (pSound->pData == 0) {
-		fprintf(stderr, "ERROR: Unable to allocate %d bytes for file %s.\n",
-				sizeInBytes, fileName);
-		exit(EXIT_FAILURE);
-	}
+            channels = format[2];
+            if (format[0] != 1 || format[1] != 0 ||
+                (channels != 1 && channels != 2) || format[3] != 0 ||
+                read32le(format + 4) != SAMPLE_RATE ||
+                format[14] != 16 || format[15] != 0) {
+                goto invalid;
+            }
 
-	// Read PCM data from wave file into memory
-	int samplesRead = fread(pSound->pData, SAMPLE_SIZE, pSound->numSamples, file);
-	if (samplesRead != pSound->numSamples) {
-		fprintf(stderr, "ERROR: Unable to read %d samples from file %s (read %d).\n",
-				pSound->numSamples, fileName, samplesRead);
-		exit(EXIT_FAILURE);
-	}
+            haveFormat = true;
+            size -= sizeof format;
+        } else if (memcmp(chunk, "data", 4) == 0) {
+            if (!haveFormat || size == 0 || size % (SAMPLE_SIZE * channels) != 0) {
+                goto invalid;
+            }
+
+            size_t sampleCount = size / SAMPLE_SIZE;
+            short *samples = malloc(size);
+            if (samples == NULL) {
+                perror(fileName);
+                fclose(file);
+                return -1;
+            }
+
+            if (fread(samples, SAMPLE_SIZE, sampleCount, file) != sampleCount) {
+                free(samples);
+                goto invalid;
+            }
+
+            if (channels == 2) {
+                sampleCount /= 2;
+                for (size_t i = 0; i < sampleCount; ++i) {
+                    samples[i] = (short)(((int)samples[2 * i] + samples[2 * i + 1]) / 2);
+                }
+            }
+
+            pSound->pData = samples;
+            pSound->numSamples = (int)sampleCount;
+            fclose(file);
+            return 0;
+        }
+
+        if (fseek(file, (long)size + (size & 1u), SEEK_CUR) != 0) {
+            goto invalid;
+        }
+    }
+
+invalid:
+    fprintf(stderr, "%s: expected a 48 kHz, 16-bit PCM mono or stereo WAV.\n", fileName);
+    fclose(file);
+    return -1;
 }
 
 void AudioMixer_freeWaveFileData(wavedata_t *pSound)
@@ -190,7 +240,7 @@ void AudioMixer_cleanup(void)
 
 
 	// Stop the PCM generation thread
-	stopping = true;
+	atomic_store(&stopping, true);
 	pthread_join(playbackThreadId, NULL);
 
 	// Shutdown the PCM output, allowing any pending sound to play out (drain)
@@ -237,18 +287,25 @@ static void setVolumeLocked(int newVolume)
     // const char *selem_name = "PCM";	// For ZEN cape
     const char *selem_name = "Speaker";	// For USB Audio
 
-    snd_mixer_open(&mixerHandle, 0);
-    snd_mixer_attach(mixerHandle, card);
-    snd_mixer_selem_register(mixerHandle, NULL, NULL);
-    snd_mixer_load(mixerHandle);
+    if (snd_mixer_open(&mixerHandle, 0) < 0) {
+        return;
+    }
+    if (snd_mixer_attach(mixerHandle, card) < 0 ||
+        snd_mixer_selem_register(mixerHandle, NULL, NULL) < 0 ||
+        snd_mixer_load(mixerHandle) < 0) {
+        snd_mixer_close(mixerHandle);
+        return;
+    }
 
     snd_mixer_selem_id_alloca(&sid);
     snd_mixer_selem_id_set_index(sid, 0);
     snd_mixer_selem_id_set_name(sid, selem_name);
     snd_mixer_elem_t* elem = snd_mixer_find_selem(mixerHandle, sid);
 
-    snd_mixer_selem_get_playback_volume_range(elem, &min, &max);
-    snd_mixer_selem_set_playback_volume_all(elem, volume * max / 100);
+    if (elem != NULL && snd_mixer_selem_has_playback_volume(elem)) {
+        snd_mixer_selem_get_playback_volume_range(elem, &min, &max);
+        snd_mixer_selem_set_playback_volume_all(elem, min + volume * (max - min) / 100);
+    }
 
     snd_mixer_close(mixerHandle);
 }
@@ -377,7 +434,7 @@ static void fillPlaybackBuffer(short *buff, int size)
 
 void* playbackThread(void* _arg)
 {
-	while (!stopping) {
+	while (!atomic_load(&stopping)) {
 		// Generate next block of audio
 		fillPlaybackBuffer(playbackBuffer, playbackBufferSize);
 
