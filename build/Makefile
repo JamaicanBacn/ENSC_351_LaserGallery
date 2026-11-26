@@ -130,17 +130,17 @@ hal/fast:
 .PHONY : hal/fast
 
 #=============================================================================
-# Target rules for targets named LED_USB
+# Target rules for targets named ENSC351_GALLERY
 
 # Build rule for target.
-LED_USB: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 LED_USB
-.PHONY : LED_USB
+ENSC351_GALLERY: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ENSC351_GALLERY
+.PHONY : ENSC351_GALLERY
 
 # fast build rule for target.
-LED_USB/fast:
-	$(MAKE) $(MAKESILENT) -f app/CMakeFiles/LED_USB.dir/build.make app/CMakeFiles/LED_USB.dir/build
-.PHONY : LED_USB/fast
+ENSC351_GALLERY/fast:
+	$(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/build
+.PHONY : ENSC351_GALLERY/fast
 
 # Help Target
 help:
@@ -150,7 +150,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... LED_USB"
+	@echo "... ENSC351_GALLERY"
 	@echo "... hal"
 .PHONY : help
 

@@ -22,6 +22,9 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake-3.31/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
   "/usr/share/cmake-3.31/Modules/Compiler/GNU-C.cmake"
   "/usr/share/cmake-3.31/Modules/Compiler/GNU.cmake"
+  "/usr/share/cmake-3.31/Modules/FindALSA.cmake"
+  "/usr/share/cmake-3.31/Modules/FindPackageHandleStandardArgs.cmake"
+  "/usr/share/cmake-3.31/Modules/FindPackageMessage.cmake"
   "/usr/share/cmake-3.31/Modules/Internal/CMakeCLinkerInformation.cmake"
   "/usr/share/cmake-3.31/Modules/Internal/CMakeCommonLinkerInformation.cmake"
   "/usr/share/cmake-3.31/Modules/Linker/GNU-C.cmake"
@@ -52,5 +55,5 @@ set(CMAKE_MAKEFILE_PRODUCTS
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "hal/CMakeFiles/hal.dir/DependInfo.cmake"
-  "app/CMakeFiles/LED_USB.dir/DependInfo.cmake"
+  "app/CMakeFiles/ENSC351_GALLERY.dir/DependInfo.cmake"
   )

@@ -86,11 +86,11 @@ clean: app/clean
 # Directory level rules for directory app
 
 # Recursive "all" directory target.
-app/all: app/CMakeFiles/LED_USB.dir/all
+app/all: app/CMakeFiles/ENSC351_GALLERY.dir/all
 .PHONY : app/all
 
 # Recursive "codegen" directory target.
-app/codegen: app/CMakeFiles/LED_USB.dir/codegen
+app/codegen: app/CMakeFiles/ENSC351_GALLERY.dir/codegen
 .PHONY : app/codegen
 
 # Recursive "preinstall" directory target.
@@ -98,7 +98,7 @@ app/preinstall:
 .PHONY : app/preinstall
 
 # Recursive "clean" directory target.
-app/clean: app/CMakeFiles/LED_USB.dir/clean
+app/clean: app/CMakeFiles/ENSC351_GALLERY.dir/clean
 .PHONY : app/clean
 
 #=============================================================================
@@ -153,36 +153,36 @@ hal/CMakeFiles/hal.dir/clean:
 .PHONY : hal/CMakeFiles/hal.dir/clean
 
 #=============================================================================
-# Target rules for target app/CMakeFiles/LED_USB.dir
+# Target rules for target app/CMakeFiles/ENSC351_GALLERY.dir
 
 # All Build rule for target.
-app/CMakeFiles/LED_USB.dir/all: hal/CMakeFiles/hal.dir/all
-	$(MAKE) $(MAKESILENT) -f app/CMakeFiles/LED_USB.dir/build.make app/CMakeFiles/LED_USB.dir/depend
-	$(MAKE) $(MAKESILENT) -f app/CMakeFiles/LED_USB.dir/build.make app/CMakeFiles/LED_USB.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/maximus/repositories/ENSC_351_LaserGallery/build/CMakeFiles --progress-num=1,2,3 "Built target LED_USB"
-.PHONY : app/CMakeFiles/LED_USB.dir/all
+app/CMakeFiles/ENSC351_GALLERY.dir/all: hal/CMakeFiles/hal.dir/all
+	$(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/depend
+	$(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/maximus/repositories/ENSC_351_LaserGallery/build/CMakeFiles --progress-num=1,2,3 "Built target ENSC351_GALLERY"
+.PHONY : app/CMakeFiles/ENSC351_GALLERY.dir/all
 
 # Build rule for subdir invocation for target.
-app/CMakeFiles/LED_USB.dir/rule: cmake_check_build_system
+app/CMakeFiles/ENSC351_GALLERY.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/maximus/repositories/ENSC_351_LaserGallery/build/CMakeFiles 7
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 app/CMakeFiles/LED_USB.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 app/CMakeFiles/ENSC351_GALLERY.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/maximus/repositories/ENSC_351_LaserGallery/build/CMakeFiles 0
-.PHONY : app/CMakeFiles/LED_USB.dir/rule
+.PHONY : app/CMakeFiles/ENSC351_GALLERY.dir/rule
 
 # Convenience name for target.
-LED_USB: app/CMakeFiles/LED_USB.dir/rule
-.PHONY : LED_USB
+ENSC351_GALLERY: app/CMakeFiles/ENSC351_GALLERY.dir/rule
+.PHONY : ENSC351_GALLERY
 
 # codegen rule for target.
-app/CMakeFiles/LED_USB.dir/codegen:
-	$(MAKE) $(MAKESILENT) -f app/CMakeFiles/LED_USB.dir/build.make app/CMakeFiles/LED_USB.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/maximus/repositories/ENSC_351_LaserGallery/build/CMakeFiles --progress-num=1,2,3 "Finished codegen for target LED_USB"
-.PHONY : app/CMakeFiles/LED_USB.dir/codegen
+app/CMakeFiles/ENSC351_GALLERY.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/maximus/repositories/ENSC_351_LaserGallery/build/CMakeFiles --progress-num=1,2,3 "Finished codegen for target ENSC351_GALLERY"
+.PHONY : app/CMakeFiles/ENSC351_GALLERY.dir/codegen
 
 # clean rule for target.
-app/CMakeFiles/LED_USB.dir/clean:
-	$(MAKE) $(MAKESILENT) -f app/CMakeFiles/LED_USB.dir/build.make app/CMakeFiles/LED_USB.dir/clean
-.PHONY : app/CMakeFiles/LED_USB.dir/clean
+app/CMakeFiles/ENSC351_GALLERY.dir/clean:
+	$(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/clean
+.PHONY : app/CMakeFiles/ENSC351_GALLERY.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

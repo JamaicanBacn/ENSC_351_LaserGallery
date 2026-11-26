@@ -1,13 +1,16 @@
 include_directories(include)
+find_package(ALSA REQUIRED)
+
 file(GLOB MY_SOURCES "src/*.c")
-add_executable( LED_USB ${MY_SOURCES})
+add_executable( ENSC351_GALLERY ${MY_SOURCES})
 
-target_link_libraries( LED_USB LINK_PRIVATE hal)
+target_link_libraries( ENSC351_GALLERY PRIVATE asound hal gpiod m)
 
-target_link_libraries( LED_USB PRIVATE gpiod m)
-
-add_custom_command(TARGET LED_USB POST_BUILD
+add_custom_command(TARGET ENSC351_GALLERY POST_BUILD
     COMMAND "${CMAKE_COMMAND}" -E copy
-        "$<TARGET_FILE:LED_USB>"
+        "$<TARGET_FILE:ENSC351_GALLERY>"
         "$ENV{HOME}/public/"
+    COMMAND "${CMAKE_COMMAND}" -E copy_directory
+        "${CMAKE_SOURCE_DIR}/wave-files"
+        "~/public/wave-files" 
     COMMENT "Copying exec to public")

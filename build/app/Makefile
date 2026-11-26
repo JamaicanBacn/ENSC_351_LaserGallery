@@ -117,25 +117,49 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-app/CMakeFiles/LED_USB.dir/rule:
-	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 app/CMakeFiles/LED_USB.dir/rule
-.PHONY : app/CMakeFiles/LED_USB.dir/rule
+app/CMakeFiles/ENSC351_GALLERY.dir/rule:
+	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 app/CMakeFiles/ENSC351_GALLERY.dir/rule
+.PHONY : app/CMakeFiles/ENSC351_GALLERY.dir/rule
 
 # Convenience name for target.
-LED_USB: app/CMakeFiles/LED_USB.dir/rule
-.PHONY : LED_USB
+ENSC351_GALLERY: app/CMakeFiles/ENSC351_GALLERY.dir/rule
+.PHONY : ENSC351_GALLERY
 
 # fast build rule for target.
-LED_USB/fast:
-	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/LED_USB.dir/build.make app/CMakeFiles/LED_USB.dir/build
-.PHONY : LED_USB/fast
+ENSC351_GALLERY/fast:
+	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/build
+.PHONY : ENSC351_GALLERY/fast
+
+src/audioMixer.o: src/audioMixer.c.o
+.PHONY : src/audioMixer.o
+
+# target to build an object file
+src/audioMixer.c.o:
+	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.o
+.PHONY : src/audioMixer.c.o
+
+src/audioMixer.i: src/audioMixer.c.i
+.PHONY : src/audioMixer.i
+
+# target to preprocess a source file
+src/audioMixer.c.i:
+	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.i
+.PHONY : src/audioMixer.c.i
+
+src/audioMixer.s: src/audioMixer.c.s
+.PHONY : src/audioMixer.s
+
+# target to generate assembly for a file
+src/audioMixer.c.s:
+	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.s
+.PHONY : src/audioMixer.c.s
 
 src/main.o: src/main.c.o
 .PHONY : src/main.o
 
 # target to build an object file
 src/main.c.o:
-	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/LED_USB.dir/build.make app/CMakeFiles/LED_USB.dir/src/main.c.o
+	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/src/main.c.o
 .PHONY : src/main.c.o
 
 src/main.i: src/main.c.i
@@ -143,7 +167,7 @@ src/main.i: src/main.c.i
 
 # target to preprocess a source file
 src/main.c.i:
-	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/LED_USB.dir/build.make app/CMakeFiles/LED_USB.dir/src/main.c.i
+	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/src/main.c.i
 .PHONY : src/main.c.i
 
 src/main.s: src/main.c.s
@@ -151,32 +175,8 @@ src/main.s: src/main.c.s
 
 # target to generate assembly for a file
 src/main.c.s:
-	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/LED_USB.dir/build.make app/CMakeFiles/LED_USB.dir/src/main.c.s
+	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/src/main.c.s
 .PHONY : src/main.c.s
-
-src/periodTimer.o: src/periodTimer.c.o
-.PHONY : src/periodTimer.o
-
-# target to build an object file
-src/periodTimer.c.o:
-	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/LED_USB.dir/build.make app/CMakeFiles/LED_USB.dir/src/periodTimer.c.o
-.PHONY : src/periodTimer.c.o
-
-src/periodTimer.i: src/periodTimer.c.i
-.PHONY : src/periodTimer.i
-
-# target to preprocess a source file
-src/periodTimer.c.i:
-	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/LED_USB.dir/build.make app/CMakeFiles/LED_USB.dir/src/periodTimer.c.i
-.PHONY : src/periodTimer.c.i
-
-src/periodTimer.s: src/periodTimer.c.s
-.PHONY : src/periodTimer.s
-
-# target to generate assembly for a file
-src/periodTimer.c.s:
-	cd /home/maximus/repositories/ENSC_351_LaserGallery/build && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/LED_USB.dir/build.make app/CMakeFiles/LED_USB.dir/src/periodTimer.c.s
-.PHONY : src/periodTimer.c.s
 
 # Help Target
 help:
@@ -186,13 +186,13 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... LED_USB"
+	@echo "... ENSC351_GALLERY"
+	@echo "... src/audioMixer.o"
+	@echo "... src/audioMixer.i"
+	@echo "... src/audioMixer.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
-	@echo "... src/periodTimer.o"
-	@echo "... src/periodTimer.i"
-	@echo "... src/periodTimer.s"
 .PHONY : help
 
 
