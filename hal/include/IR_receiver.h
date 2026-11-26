@@ -8,8 +8,8 @@
 
 #define ID_LENGTH 3
 
-#define PLAYER1_CODE 0x1
-#define PLAYER2_CODE 0x2
+#define PLAYER1_CODE 0x3
+#define PLAYER2_CODE 0x7
 
 #define US      1000
 #define _100US  100 * US
