@@ -68,17 +68,22 @@ hal/CMakeFiles/hal.dir/src/LED_RINGS.c.o: /home/maximus/repositories/ENSC_351_La
   /usr/aarch64-linux-gnu/include/asm/types.h \
   /usr/aarch64-linux-gnu/include/bits/atomic_wide_counter.h \
   /usr/aarch64-linux-gnu/include/bits/byteswap.h \
+  /usr/aarch64-linux-gnu/include/bits/confname.h \
   /usr/aarch64-linux-gnu/include/bits/cpu-set.h \
   /usr/aarch64-linux-gnu/include/bits/endian.h \
   /usr/aarch64-linux-gnu/include/bits/endianness.h \
+  /usr/aarch64-linux-gnu/include/bits/environments.h \
   /usr/aarch64-linux-gnu/include/bits/fcntl-linux.h \
   /usr/aarch64-linux-gnu/include/bits/fcntl.h \
   /usr/aarch64-linux-gnu/include/bits/floatn-common.h \
   /usr/aarch64-linux-gnu/include/bits/floatn.h \
+  /usr/aarch64-linux-gnu/include/bits/getopt_core.h \
+  /usr/aarch64-linux-gnu/include/bits/getopt_posix.h \
   /usr/aarch64-linux-gnu/include/bits/ioctl-types.h \
   /usr/aarch64-linux-gnu/include/bits/ioctls.h \
   /usr/aarch64-linux-gnu/include/bits/libc-header-start.h \
   /usr/aarch64-linux-gnu/include/bits/long-double.h \
+  /usr/aarch64-linux-gnu/include/bits/posix_opt.h \
   /usr/aarch64-linux-gnu/include/bits/pthread_stack_min-dynamic.h \
   /usr/aarch64-linux-gnu/include/bits/pthread_stack_min.h \
   /usr/aarch64-linux-gnu/include/bits/pthreadtypes-arch.h \
@@ -123,6 +128,7 @@ hal/CMakeFiles/hal.dir/src/LED_RINGS.c.o: /home/maximus/repositories/ENSC_351_La
   /usr/aarch64-linux-gnu/include/bits/types/timer_t.h \
   /usr/aarch64-linux-gnu/include/bits/typesizes.h \
   /usr/aarch64-linux-gnu/include/bits/uintn-identity.h \
+  /usr/aarch64-linux-gnu/include/bits/unistd_ext.h \
   /usr/aarch64-linux-gnu/include/bits/waitflags.h \
   /usr/aarch64-linux-gnu/include/bits/waitstatus.h \
   /usr/aarch64-linux-gnu/include/bits/wchar.h \
@@ -152,6 +158,7 @@ hal/CMakeFiles/hal.dir/src/LED_RINGS.c.o: /home/maximus/repositories/ENSC_351_La
   /usr/aarch64-linux-gnu/include/sys/ttydefaults.h \
   /usr/aarch64-linux-gnu/include/sys/types.h \
   /usr/aarch64-linux-gnu/include/time.h \
+  /usr/aarch64-linux-gnu/include/unistd.h \
   /usr/lib/gcc-cross/aarch64-linux-gnu/14/include/stdarg.h \
   /usr/lib/gcc-cross/aarch64-linux-gnu/14/include/stddef.h \
   /usr/lib/gcc-cross/aarch64-linux-gnu/14/include/stdint.h
@@ -204,8 +211,6 @@ hal/CMakeFiles/hal.dir/src/gpio.c.o: /home/maximus/repositories/ENSC_351_LaserGa
 
 /usr/aarch64-linux-gnu/include/linux/spi/spidev.h:
 
-/usr/aarch64-linux-gnu/include/linux/spi/spi.h:
-
 /home/maximus/repositories/ENSC_351_LaserGallery/hal/src/gpio.c:
 
 /usr/aarch64-linux-gnu/include/sched.h:
@@ -213,6 +218,8 @@ hal/CMakeFiles/hal.dir/src/gpio.c.o: /home/maximus/repositories/ENSC_351_LaserGa
 /usr/aarch64-linux-gnu/include/linux/const.h:
 
 /usr/aarch64-linux-gnu/include/fcntl.h:
+
+/usr/aarch64-linux-gnu/include/bits/unistd_ext.h:
 
 /usr/aarch64-linux-gnu/include/bits/types/struct_timeval.h:
 
@@ -238,6 +245,12 @@ hal/CMakeFiles/hal.dir/src/gpio.c.o: /home/maximus/repositories/ENSC_351_LaserGa
 
 /usr/aarch64-linux-gnu/include/bits/ioctl-types.h:
 
+/usr/aarch64-linux-gnu/include/bits/getopt_posix.h:
+
+/usr/aarch64-linux-gnu/include/linux/spi/spi.h:
+
+/usr/aarch64-linux-gnu/include/bits/getopt_core.h:
+
 /usr/aarch64-linux-gnu/include/linux/posix_types.h:
 
 /usr/aarch64-linux-gnu/include/bits/fcntl.h:
@@ -246,7 +259,11 @@ hal/CMakeFiles/hal.dir/src/gpio.c.o: /home/maximus/repositories/ENSC_351_LaserGa
 
 /usr/aarch64-linux-gnu/include/bits/fcntl-linux.h:
 
+/usr/aarch64-linux-gnu/include/bits/environments.h:
+
 /usr/aarch64-linux-gnu/include/bits/cpu-set.h:
+
+/usr/aarch64-linux-gnu/include/bits/confname.h:
 
 /usr/aarch64-linux-gnu/include/bits/byteswap.h:
 
@@ -287,6 +304,8 @@ hal/CMakeFiles/hal.dir/src/gpio.c.o: /home/maximus/repositories/ENSC_351_LaserGa
 /usr/aarch64-linux-gnu/include/bits/waitstatus.h:
 
 /usr/aarch64-linux-gnu/include/bits/types/FILE.h:
+
+/usr/aarch64-linux-gnu/include/unistd.h:
 
 /usr/aarch64-linux-gnu/include/linux/types.h:
 
@@ -347,6 +366,8 @@ hal/CMakeFiles/hal.dir/src/gpio.c.o: /home/maximus/repositories/ENSC_351_LaserGa
 /usr/aarch64-linux-gnu/include/asm-generic/posix_types.h:
 
 /usr/aarch64-linux-gnu/include/bits/types/timer_t.h:
+
+/usr/aarch64-linux-gnu/include/bits/posix_opt.h:
 
 /usr/aarch64-linux-gnu/include/bits/typesizes.h:
 

@@ -30,6 +30,11 @@ static void sleepForMs(long long delayInMs)
     nanosleep(&reqDelay, (struct timespec *) NULL);
 }
 
+bool in_range( uint64_t target , uint64_t value)
+{
+    return target - _200US <= value && target + _200US >= value;
+}
+
 int ir_receiver_init(IRReceiver *rec, char *chip_path, unsigned int offset)
 {
     *rec = (IRReceiver){0};
@@ -62,59 +67,140 @@ int read_IR_REC(IRReceiver *rec)
         1:
             Check for a falling edge and record when it happens.
     */
-    int ready = gpiod_line_request_wait_edge_events(
-        rec->gpio.request, MS_IN_NS);
 
-    if (ready < 0) {
-        perror("wait for IR edge");
-        return -1;
-    }
 
-    if (ready == 0) {
-        return 0;
-    }
+    while( 1 )
+    {
+        
+        int ready = gpiod_line_request_wait_edge_events(
+            rec->gpio.request, 100 * MS_IN_NS);
 
-    // If there was a GPIO edge event, read the queued events.
-    // count is the number of GPIO events read into the buffer.
-    int count = gpiod_line_request_read_edge_events(
-        rec->gpio.request, rec->events, 16);
+        if (ready < 0) {
+            perror("wait for IR edge");
+            return -1;
+        }
 
-    if (count < 0) {
-        perror("read IR edges");
-        return -1;
-    }
+        if (ready == 0) {
+            rec->state = IDLE_STATE;
+            rec->prev_stamp_ns = 0;
+            continue;
+        }
 
-    int hits = 0;
+        // If there was a GPIO edge event, read the queued events.
+        // count is the number of GPIO events read into the buffer.
+        int count = gpiod_line_request_read_edge_events(
+            rec->gpio.request, rec->events, 16);
 
-    for (int i = 0; i < count; i++) {
-        // Get the event and its type.
-        struct gpiod_edge_event *event =
-            gpiod_edge_event_buffer_get_event(rec->events, i);
-        enum gpiod_edge_event_type type =
-            gpiod_edge_event_get_event_type(event);
+        if (count < 0) {
+            perror("read IR edges");
+            return -1;
+        }
 
-        // The timestamp for the current event.
-        uint64_t stamp_ns = gpiod_edge_event_get_timestamp_ns(event);
+        int hits = 0;
 
-        // Check if the event was a falling edge.
-        if (type == GPIOD_EDGE_EVENT_FALLING_EDGE) {
-            rec->falling_ns = stamp_ns;  // Record the falling timestamp.
-            rec->have_start = true;     // Note that the burst has begun.
-        } else if (type == GPIOD_EDGE_EVENT_RISING_EDGE && rec->have_start) {
-            /*
-                We have a saved falling edge, and the current edge is rising.
-            */
-            uint64_t pulse_ns = stamp_ns - rec->falling_ns;  // Measure the difference.
-            rec->have_start = false;
+        for (int i = 0; i < count; i++) {
+            // Get the event and its type.
+            struct gpiod_edge_event *event =
+                gpiod_edge_event_buffer_get_event(rec->events, i);
+            enum gpiod_edge_event_type type =
+                gpiod_edge_event_get_event_type(event);
 
-            printf("LOW pulse: %.1f us\n", pulse_ns / 1000.0);
+            // The timestamp for the current event.
+            uint64_t stamp_ns = gpiod_edge_event_get_timestamp_ns(event);
 
-            if (pulse_ns >= 450000ULL && pulse_ns <= 800000ULL) {
-                ++hits;
+            uint64_t  edge_time_diff = stamp_ns - rec->prev_stamp_ns;
+
+            switch ( rec->state )
+            {
+                case IDLE_STATE:
+                    if( type == GPIOD_EDGE_EVENT_FALLING_EDGE)
+                    {
+                        rec->prev_stamp_ns = stamp_ns;
+                        rec->state = WAIT_PREAMBLE_RISING;
+                    }
+                    break;
+                case WAIT_PREAMBLE_RISING:
+                    if( type == GPIOD_EDGE_EVENT_RISING_EDGE)
+                    {
+                        if( in_range(_500US , edge_time_diff) )
+                        {       
+                            rec->prev_stamp_ns = stamp_ns;
+                            rec->state = WAIT_PREABMLE_GAP;
+                        } 
+                        else
+                        {
+                            rec->prev_stamp_ns = 0;
+                            rec->state = IDLE_STATE;
+                        }
+                    }
+                    break;
+                case WAIT_PREABMLE_GAP:
+                    if( type == GPIOD_EDGE_EVENT_FALLING_EDGE)
+                    {
+                        if( in_range(_2MS , edge_time_diff))
+                        {
+                            rec->state = WAIT_BIT_RISING;
+                            rec->prev_stamp_ns = stamp_ns;
+                        }
+                        else
+                        {
+                            rec->state = IDLE_STATE;
+                            rec->prev_stamp_ns = 0;
+                        }
+                    }
+                    break;
+                case WAIT_BIT_RISING:
+
+                    if( rec->bits_received >= ID_LENGTH )
+                    {
+                        if( rec->playerID = PLAYER1_CODE)
+                        {
+                            printf("PLAYER 1 HIT\n");
+                        }
+
+                        break;
+                    }
+                    
+                    if( type == GPIOD_EDGE_EVENT_RISING_EDGE)
+                    {
+
+                        if( in_range( _400US , edge_time_diff))
+                        {
+                            rec->state = WAIT_BIT_FALLING;
+                            rec->playerID <<= 1;
+                            ++rec->bits_received;
+                            rec->prev_stamp_ns = stamp_ns;
+                        }
+                        else if( in_range( _800US , edge_time_diff))
+                        {
+                            rec->state = WAIT_BIT_FALLING;
+                            rec->playerID <<= 0;
+                            ++rec->bits_received;
+                            rec->prev_stamp_ns = stamp_ns;
+                        }
+                        else{
+                            rec->state = IDLE_STATE;
+                            rec->playerID = 0;
+                            rec->bits_received = 0;
+                            rec->prev_stamp_ns = 0;
+                        }
+                    }
+                    break;
+                case WAIT_BIT_FALLING:
+                    if( type = GPIOD_EDGE_EVENT_FALLING_EDGE)
+                    {
+                        if( in_range( _1MS , edge_time_diff))
+                        {
+                            rec->state = WAIT_BIT_RISING;
+                            rec->prev_stamp_ns = stamp_ns;
+                        }
+                    }
+                    
+
             }
+          
         }
     }
 
-    return hits;
 }
 

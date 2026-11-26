@@ -113,4 +113,4 @@ app/CMakeFiles/LED_USB.dir/src/main.c.o: \
  /home/maximus/repositories/ENSC_351_LaserGallery/hal/include/gpio.h \
  /usr/include/gpiod.h \
  /usr/lib/gcc-cross/aarch64-linux-gnu/14/include/stdbool.h \
- /home/maximus/repositories/ENSC_351_LaserGallery/app/include/periodTimer.h
+ /home/maximus/repositories/ENSC_351_LaserGallery/hal/include/LED_RINGS.h

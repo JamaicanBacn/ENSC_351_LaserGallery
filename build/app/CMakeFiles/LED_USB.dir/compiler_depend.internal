@@ -3,6 +3,7 @@
 
 app/CMakeFiles/LED_USB.dir/src/main.c.o
  /home/maximus/repositories/ENSC_351_LaserGallery/app/src/main.c
+ /home/maximus/repositories/ENSC_351_LaserGallery/app/include/periodTimer.h
  /home/maximus/repositories/ENSC_351_LaserGallery/hal/include/IR_receiver.h
  /home/maximus/repositories/ENSC_351_LaserGallery/hal/include/LED_RINGS.h
  /home/maximus/repositories/ENSC_351_LaserGallery/hal/include/gpio.h

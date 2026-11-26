@@ -5,6 +5,7 @@ LED_USB: \
   /usr/lib/gcc-cross/aarch64-linux-gnu/14/libasan_preinit.o \
   /usr/lib/gcc-cross/aarch64-linux-gnu/14/libasan.so \
   CMakeFiles/LED_USB.dir/src/main.c.o \
+  CMakeFiles/LED_USB.dir/src/periodTimer.c.o \
   ../hal/libhal.a \
   /lib/aarch64-linux-gnu/libgpiod.so \
   /usr/lib/gcc-cross/aarch64-linux-gnu/14/../../../../aarch64-linux-gnu/lib/../lib/libm.so \
@@ -47,6 +48,8 @@ LED_USB: \
 /usr/lib/gcc-cross/aarch64-linux-gnu/14/libasan.so:
 
 CMakeFiles/LED_USB.dir/src/main.c.o:
+
+CMakeFiles/LED_USB.dir/src/periodTimer.c.o:
 
 ../hal/libhal.a:
 
