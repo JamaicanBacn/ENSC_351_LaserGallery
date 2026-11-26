@@ -14,5 +14,6 @@ typedef enum {
 extern wavedata_t sounds[AUDIO_SOUND_COUNT];
 
 void audio_init(void);
+void audio_cleanup(void);
 
 #endif

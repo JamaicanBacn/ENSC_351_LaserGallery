@@ -16,3 +16,11 @@ void audio_init(void)
         AudioMixer_readWaveFileIntoMemory(wavPaths[i], &sounds[i]);
     }
 }
+
+void audio_cleanup(void)
+{
+    AudioMixer_cleanup();
+    for (int i = 0; i < AUDIO_SOUND_COUNT; ++i) {
+        AudioMixer_freeWaveFileData(&sounds[i]);
+    }
+}
