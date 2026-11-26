@@ -84,9 +84,15 @@ int main()
 
     while(1)
     {
-        if( read_IR_REC(rec_ptr) == 1)
+        enum PLAYER_HITS hit = read_IR_REC(rec_ptr);
+
+        if( hit == P1_HIT)
         {
             printf("PLAYER1 HIT\n");
+        }
+        else if( hit == P2_HIT)
+        {
+            printf("PLAYER2 HIT\n");
         }
     }
     

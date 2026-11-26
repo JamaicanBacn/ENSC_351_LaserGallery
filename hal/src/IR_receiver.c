@@ -84,7 +84,7 @@ int read_IR_REC(IRReceiver *rec)
         rec->prev_stamp_ns = 0;
         rec->playerID = 0;
         rec->bits_received = 0;
-        return 0;
+        return NO_HIT;
     }
 
     // If there was a GPIO edge event, read the queued events.
@@ -177,7 +177,11 @@ int read_IR_REC(IRReceiver *rec)
 
                     if (rec->bits_received == ID_LENGTH) {
                         if (rec->playerID == PLAYER1_CODE) {
-                            ++hits;
+                            hits = P1_HIT;
+                        }
+                        else if( rec->playerID == PLAYER2_CODE)
+                        {
+                            hits = P2_HIT;
                         }
 
                         // Every completed packet resets the decoder.

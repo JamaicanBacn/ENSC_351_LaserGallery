@@ -9,7 +9,7 @@
 #define ID_LENGTH 3
 
 #define PLAYER1_CODE 0x3
-#define PLAYER2_CODE 0x7
+#define PLAYER2_CODE 0x6
 
 #define US      1000
 #define _100US  100 * US
@@ -32,6 +32,14 @@ enum IR_STATES
     WAIT_BIT_FALLING, 
     IR_STATES
 
+};
+
+enum PLAYER_HITS
+{
+    NO_HIT,
+    P1_HIT,
+    P2_HIT,
+    PLAYERS
 };
 
 typedef struct {
