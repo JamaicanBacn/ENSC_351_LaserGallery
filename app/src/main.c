@@ -2,11 +2,9 @@
 
 #include "LED_RINGS.h"
 #include "IR_receiver.h"
-#include "audio.h"
 
 #include <stdio.h>
 #include <stdint.h>
-#include <time.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
@@ -82,30 +80,20 @@ int main()
     IRReceiver receiver;
     IRReceiver* rec_ptr = &receiver;
 
-    if (ir_receiver_init(rec_ptr, GPIO_PATH, offsets[0]) < 0) {
-        return EXIT_FAILURE;
-    }
+    ir_receiver_init(rec_ptr , GPIO_PATH , offsets[0]);
 
-    if (audio_init() < 0) {
-        gpiod_edge_event_buffer_free(rec_ptr->events);
-        gpio_cleanup(&rec_ptr->gpio);
-        return EXIT_FAILURE;
-    }
+    while(1)
+    {
+        enum PLAYER_HITS hit = read_IR_REC(rec_ptr);
 
-    for (;;) {
-        int hit = read_IR_REC(rec_ptr);
-        if (hit < 0) {
-            break;
+        if( hit == P1_HIT)
+        {
+            printf("PLAYER1 HIT\n");
         }
-
-        if (hit == P1_HIT || hit == P2_HIT) {
-            puts(hit == P1_HIT ? "PLAYER1 HIT" : "PLAYER2 HIT");
-            audio_play(AUDIO_MUMMY_HIT);
+        else if( hit == P2_HIT)
+        {
+            printf("PLAYER2 HIT\n");
         }
     }
-
-    audio_cleanup();
-    gpiod_edge_event_buffer_free(rec_ptr->events);
-    gpio_cleanup(&rec_ptr->gpio);
-    return EXIT_FAILURE;
+    
 }
