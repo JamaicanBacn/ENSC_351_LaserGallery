@@ -7,6 +7,7 @@
 #include "LED_RINGS.h"
 
 #define ID_LENGTH 3
+
 #define PLAYER1_CODE 0x1
 #define PLAYER2_CODE 0x2
 

@@ -70,23 +70,25 @@ int main()
 
     //Init the gpiochup structure
 
+    /*
     for( int i = 0; i < RINGS ; i++)
     {
         ir_receiver_init( &receivers[i] , GPIOCHIP_2_PATH , offsets[i]);
     }
+    */
 
-    led_init();
+    IRReceiver* rec;
 
-    set_led(0 , RED);
-    update_leds();
-    sleepForMs(SECOND);
+    ir_receiver_init(rec , GPIO_PATH , offsets[0]);
 
-    set_led(1 , GREEN);
-    update_leds();
-    sleepForMs(SECOND);
-
-
-    led_close();
+    while(1)
+    {
+        if( read_IR_REC(rec) == 1)
+        {
+            printf("PLAYER1 HIT\n");
+        }
+    }
+    
 
     return 0;
 
