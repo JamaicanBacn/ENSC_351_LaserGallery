@@ -22,7 +22,7 @@
 
 
 
-enum IR_STATES : uint8_t
+enum IR_STATES
 {
     IDLE_STATE,
     WAIT_PREAMBLE_RISING,
