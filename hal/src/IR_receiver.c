@@ -175,39 +175,38 @@ int read_IR_REC(IRReceiver *rec)
                     rec->playerID = (rec->playerID << 1) | bit;
                     ++rec->bits_received;
 
-                    if( rec->bits_received == ID_LENGTH)
-                    {
+                    if (rec->bits_received == ID_LENGTH) {
                         if (rec->playerID == PLAYER1_CODE) {
-                            rec->state = IDLE_STATE;
-                            rec->playerID = 0;
-                            rec->bits_received = 0;
-                            rec->prev_stamp_ns = 0;
-                            return 1;
+                            ++hits;
                         }
 
-                    } 
-                    else
-                    {
-                    rec->prev_stamp_ns = stamp_ns;
-                    rec->state = WAIT_BIT_FALLING;
+                        // Every completed packet resets the decoder.
+                        rec->state = IDLE_STATE;
+                        rec->playerID = 0;
+                        rec->bits_received = 0;
+                        rec->prev_stamp_ns = 0;
+                    } else {
+                        rec->prev_stamp_ns = stamp_ns;
+                        rec->state = WAIT_BIT_FALLING;
                     }
                 }
                 break;
-            case WAIT_BIT_FALLING:
-                if( type == GPIOD_EDGE_EVENT_FALLING_EDGE)
-                {
-                    if( in_range( _1MS , edge_time_diff))
-                    {
-                        rec->state = WAIT_BIT_RISING;
+                case WAIT_BIT_FALLING:
+                    if (type == GPIOD_EDGE_EVENT_FALLING_EDGE) {
+                        if (in_range(_1MS, edge_time_diff)) {
+                            rec->state = WAIT_BIT_RISING;
+                        } else {
+                            // Reuse this falling edge as a possible preamble start.
+                            rec->playerID = 0;
+                            rec->bits_received = 0;
+                            rec->state = WAIT_PREAMBLE_RISING;
+                        }
                         rec->prev_stamp_ns = stamp_ns;
                     }
-                }
-                
+                    break;
+        }  // End of switch.
+    }      // End of the event for loop.
 
-        }
-        
-    }
-
-
+    return hits;
 }
 

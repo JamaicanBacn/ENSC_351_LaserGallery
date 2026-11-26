@@ -76,14 +76,15 @@ int main()
         ir_receiver_init( &receivers[i] , GPIOCHIP_2_PATH , offsets[i]);
     }
     */
+    
+    IRReceiver receiver;
+    IRReceiver* rec_ptr = &receiver;
 
-    IRReceiver* rec;
-
-    ir_receiver_init(rec , GPIO_PATH , offsets[0]);
+    ir_receiver_init(rec_ptr , GPIO_PATH , offsets[0]);
 
     while(1)
     {
-        if( read_IR_REC(rec) == 1)
+        if( read_IR_REC(rec_ptr) == 1)
         {
             printf("PLAYER1 HIT\n");
         }
