@@ -32,7 +32,7 @@ static void sleepForMs(long long delayInMs)
 
 bool in_range( uint64_t target , uint64_t value)
 {
-    return target - _200US <= value && target + _200US >= value;
+    return target - _100US <= value && target + _100US >= value;
 }
 
 int ir_receiver_init(IRReceiver *rec, char *chip_path, unsigned int offset)
@@ -83,6 +83,8 @@ int read_IR_REC(IRReceiver *rec)
         if (ready == 0) {
             rec->state = IDLE_STATE;
             rec->prev_stamp_ns = 0;
+            rec->playerID = 0;
+            rec->bits_received = 0;
             continue;
         }
 
@@ -150,44 +152,51 @@ int read_IR_REC(IRReceiver *rec)
                     }
                     break;
                 case WAIT_BIT_RISING:
-
-                    if( rec->bits_received >= ID_LENGTH )
-                    {
-                        if( rec->playerID = PLAYER1_CODE)
-                        {
-                            printf("PLAYER 1 HIT\n");
-                        }
-
-                        break;
-                    }
                     
                     if( type == GPIOD_EDGE_EVENT_RISING_EDGE)
                     {
+                        uint8_t bit = 0;
 
                         if( in_range( _400US , edge_time_diff))
                         {
-                            rec->state = WAIT_BIT_FALLING;
-                            rec->playerID <<= 1;
-                            ++rec->bits_received;
-                            rec->prev_stamp_ns = stamp_ns;
+                            bit = 1;
                         }
                         else if( in_range( _800US , edge_time_diff))
                         {
-                            rec->state = WAIT_BIT_FALLING;
-                            rec->playerID <<= 0;
-                            ++rec->bits_received;
-                            rec->prev_stamp_ns = stamp_ns;
+                            bit = 0;
                         }
                         else{
                             rec->state = IDLE_STATE;
                             rec->playerID = 0;
                             rec->bits_received = 0;
                             rec->prev_stamp_ns = 0;
+                            break;
+                        }
+
+                        rec->playerID = (rec->playerID << 1) | bit;
+                        ++rec->bits_received;
+
+                        if( rec->bits_received == ID_LENGTH)
+                        {
+                            if (rec->playerID == PLAYER1_CODE) {
+                                printf("PLAYER 1 HIT\n");
+                                ++hits;
+                            }
+
+                            rec->state = IDLE_STATE;
+                            rec->playerID = 0;
+                            rec->bits_received = 0;
+                            rec->prev_stamp_ns = 0;
+                        } 
+                        else
+                        {
+                        rec->prev_stamp_ns = stamp_ns;
+                        rec->state = WAIT_BIT_FALLING;
                         }
                     }
                     break;
                 case WAIT_BIT_FALLING:
-                    if( type = GPIOD_EDGE_EVENT_FALLING_EDGE)
+                    if( type == GPIOD_EDGE_EVENT_FALLING_EDGE)
                     {
                         if( in_range( _1MS , edge_time_diff))
                         {
