@@ -7,6 +7,7 @@
 #include "audio.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <stdint.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
@@ -53,7 +54,7 @@ const GPIOCHIP2_OFFSETS gpiochip2_offsets = {
 
 TargetEntity Targets[RINGS];
 
-void CompleteGameClean();
+int CompleteGameClean(void);
 
 void GameSetup(uint32_t* offsets);
 
@@ -79,24 +80,35 @@ int main()
 
     
     int status = EXIT_SUCCESS;
-    if (ActivateTarget(&Targets[0], 5000, 50) < 0) {
-        fprintf(stderr, "Could not read IR from target 1\n");
+    int error = ActivateTarget(&Targets[0], 5000, 50);
+    if (error != 0) {
+        fprintf(stderr, "Could not activate target 1: %s\n", strerror(error));
         status = EXIT_FAILURE;
     }
-    if (ActivateTarget(&Targets[4], 3000, 10) < 0) {
-        fprintf(stderr, "Could not read IR from target 5\n");
+    error = ActivateTarget(&Targets[4], 3000, 10);
+    if (error != 0) {
+        fprintf(stderr, "Could not activate target 5: %s\n", strerror(error));
         status = EXIT_FAILURE;
     }
 
-    CompleteGameClean();    
-
+    if (CompleteGameClean() != 0) {
+        status = EXIT_FAILURE;
+    }
 
     printf("FINAL SCORES: Player1 -> %" PRIu64 ", Player2 -> %" PRIu64 "\n", P1_points, P2_points);
     return status;
 }
 
-void CompleteGameClean()
+int CompleteGameClean(void)
 {
+    int status = 0;
+    for (int i = 0; i < RINGS; ++i) {
+        if (WaitForTarget(&Targets[i]) < 0) {
+            fprintf(stderr, "Could not read IR from target %d\n", i + 1);
+            status = -1;
+        }
+    }
+
     audio_cleanup();
 
     for (int i = 0; i < RINGS; i++) 
@@ -111,6 +123,7 @@ void CompleteGameClean()
     }
 
     END();
+    return status;
 }
 
 

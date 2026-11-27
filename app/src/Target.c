@@ -5,6 +5,10 @@
 #include <stdatomic.h>
 
 pthread_mutex_t PointMutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t target_lock = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t target_finished = PTHREAD_COND_INITIALIZER;
+
+static void *target_ir_worker(void *arg);
 
 pthread_t LedID = 0;
 
@@ -22,8 +26,8 @@ void EntityInit( TargetEntity* target , IRReceiver* rec , LED* led_addr , waveda
     target->HitSound = hit_sound;
     target->TargetNumber = led_addr->RING_NUMBER;
     
-    target->Actived_timestamp = 0;
-    target->active = 0;
+    target->active = false;
+    target->ir_result = NO_HIT;
 
     target->PointValue = 10;
 
@@ -52,26 +56,56 @@ static uint64_t monotonic_ns(void)
 
 int ActivateTarget(TargetEntity *target, uint64_t duration_ms, uint8_t points)
 {
-    target->ir_result = NO_HIT;
-    if (ir_receiver_prepare(target->rec) < 0) {
-        target->ir_result = -1;
-        return -1;
+    pthread_attr_t attr;
+    int error = pthread_attr_init(&attr);
+    if (error != 0) {
+        return error;
+    }
+    error = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+    if (error != 0) {
+        pthread_attr_destroy(&attr);
+        return error;
     }
 
-    target->PointValue = points;
-    target->active = true;
-    target->Actived_timestamp = monotonic_ns();
-    set_led(target->TargetNumber, RED);
-    target->deadline_ns = monotonic_ns() + duration_ms * UINT64_C(1000000);
+    pthread_mutex_lock(&target_lock);
+    if (target->active) {
+        error = EBUSY;
+    } else {
+        target->active = true;
+        target->duration_ms = duration_ms;
+        target->PointValue = points;
+        target->ir_result = NO_HIT;
 
+        pthread_t thread;
+        error = pthread_create(&thread, &attr, target_ir_worker, target);
+        if (error != 0) {
+            target->active = false;
+        }
+    }
+    pthread_mutex_unlock(&target_lock);
+    pthread_attr_destroy(&attr);
+    return error;
+}
+
+static void *target_ir_worker(void *arg)
+{
+    TargetEntity *target = arg;
     int accepted = NO_HIT;
+    if (ir_receiver_prepare(target->rec) < 0) {
+        accepted = -1;
+        goto finished;
+    }
+
+    uint64_t activated_ns = monotonic_ns();
+    set_led(target->TargetNumber, RED);
+    uint64_t deadline_ns = monotonic_ns() + target->duration_ms * UINT64_C(1000000);
     AudioMixer_queueSound(target->ActivateSound);
 
-    while (monotonic_ns() < target->deadline_ns) 
+    while (monotonic_ns() < deadline_ns)
     {
         int result = read_IR_REC(target->rec,
-                                target->Actived_timestamp,
-                                target->deadline_ns);
+                                activated_ns,
+                                deadline_ns);
 
         if (result < 0) {
             accepted = -1;
@@ -84,8 +118,6 @@ int ActivateTarget(TargetEntity *target, uint64_t duration_ms, uint8_t points)
         }
     }
     
-
-    target->ir_result = accepted;
 
     if (accepted == P1_HIT || accepted == P2_HIT) {
         pthread_mutex_lock(&PointMutex);
@@ -106,14 +138,30 @@ int ActivateTarget(TargetEntity *target, uint64_t duration_ms, uint8_t points)
         }
     }
 
+finished:
     DeactivateTarget(target);
-    return accepted < 0 ? -1 : 0;
+    pthread_mutex_lock(&target_lock);
+    target->ir_result = accepted;
+    target->active = false;
+    pthread_cond_broadcast(&target_finished);
+    pthread_mutex_unlock(&target_lock);
+    return NULL;
+}
+
+int WaitForTarget(TargetEntity *target)
+{
+    pthread_mutex_lock(&target_lock);
+    while (target->active) {
+        pthread_cond_wait(&target_finished, &target_lock);
+    }
+    int result = target->ir_result;
+    pthread_mutex_unlock(&target_lock);
+    return result;
 }
 
  void DeactivateTarget(TargetEntity* target)
  {
     set_led(target->TargetNumber, BLUE);
-    target->active = false;
  }
 
 void flash_seq( TargetEntity* target , RGB colour1 , RGB colour2)
