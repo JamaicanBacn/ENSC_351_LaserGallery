@@ -56,10 +56,8 @@ void led_init()
 void set_led( int ring , RGB rgb )
 {
     // before changing the color make thread safe
-    pthread_mutex_lock(&led_lock);
     LED_RINGS[ring].rgb = rgb;
     update_leds();
-    pthread_mutex_unlock(&led_lock);
 
 }
 
@@ -68,7 +66,6 @@ void update_leds()
 
     uint8_t *pixel = frame + RESET_BYTES;
     
-    pthread_mutex_lock(&led_lock);
 
     for (int ring = 0; ring < RINGS; ++ring) {
         for (int led = 0; led < PIXELS_PER_RING; ++led) {
@@ -81,7 +78,6 @@ void update_leds()
 
     ssize_t written = write(SPI_FD, frame, sizeof(frame));
 
-    pthread_mutex_unlock(&led_lock);
 
     if (written < 0) {
         perror("write SPI frame");

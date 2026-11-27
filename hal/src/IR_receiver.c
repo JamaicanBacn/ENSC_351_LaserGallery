@@ -44,9 +44,7 @@ int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStam
         1:
             Check for a falling edge and record when it happens.
     */
-
-
-    
+ 
     
     int ready = gpiod_line_request_wait_edge_events(
         rec->gpio.request, 100 * MS_IN_NS);
@@ -89,11 +87,6 @@ int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStam
         uint64_t  edge_time_diff = stamp_ns - rec->prev_stamp_ns;
 
         //check to make sure edged happened after Activation of the Target
-
-        if( stamp_ns < ActivatedStamp || stamp_ns >= DealineStamp)
-        {
-            continue;
-        }
 
         switch ( rec->state )
         {
@@ -196,7 +189,7 @@ int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStam
         }  // End of switch.
     }      // End of the event for loop.
 
-    return hits;
+    return NO_HIT;
 }
 
 void resetReceiver(IRReceiver* rec)
