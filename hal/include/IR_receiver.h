@@ -59,7 +59,7 @@ typedef struct {
 extern IRReceiver receivers[RINGS];
 
 int ir_receiver_init( IRReceiver *rec , char* chip_path , unsigned int offset);
-int read_IR_REC(IRReceiver *rec);
+int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStamp);
 void resetReceiver(IRReceiver* rec);
 
 #endif
