@@ -1,6 +1,4 @@
-
 #include "IR_receiver.h"
-#include "time.h"
 #include <gpiod.h>
 
 #define MS_IN_NS 1000000
@@ -35,17 +33,9 @@ int ir_receiver_init(IRReceiver *rec, char *chip_path, unsigned int offset)
     return 0;
 }
 
-int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStamp)
+int read_IR_REC(IRReceiver *rec, uint64_t activated_ns, uint64_t deadline_ns)
 {
-    /*
-        Pulse:
-            GPIO low for 450-800 us is detected as a shot.
-
-        1:
-            Check for a falling edge and record when it happens.
-    */
- 
-    
+    // The receiver is active-low: a falling edge starts each pulse.
     int ready = gpiod_line_request_wait_edge_events(
         rec->gpio.request, 100 * MS_IN_NS);
 
@@ -55,10 +45,7 @@ int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStam
     }
 
     if (ready == 0) {
-        rec->state = IDLE_STATE;
-        rec->prev_stamp_ns = 0;
-        rec->playerID = 0;
-        rec->bits_received = 0;
+        resetReceiver(rec);
         return NO_HIT;
     }
 
@@ -72,8 +59,6 @@ int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStam
         return -1;
     }
 
-    int hits = 0;
-
     for (int i = 0; i < count; i++) {
         // Get the event and its type.
         struct gpiod_edge_event *event =
@@ -84,9 +69,13 @@ int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStam
         // The timestamp for the current event.
         uint64_t stamp_ns = gpiod_edge_event_get_timestamp_ns(event);
 
-        uint64_t  edge_time_diff = stamp_ns - rec->prev_stamp_ns;
+        // GPIO queues edges even while the target is inactive.
+        if (stamp_ns < activated_ns || stamp_ns >= deadline_ns) {
+            resetReceiver(rec);
+            continue;
+        }
 
-        //check to make sure edged happened after Activation of the Target
+        uint64_t edge_time_diff = stamp_ns - rec->prev_stamp_ns;
 
         switch ( rec->state )
         {
@@ -122,8 +111,9 @@ int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStam
                     }
                     else
                     {
-                        rec->state = IDLE_STATE;
-                        rec->prev_stamp_ns = 0;
+                        // This edge can start a new preamble after a bad gap.
+                        rec->state = WAIT_PREAMBLE_RISING;
+                        rec->prev_stamp_ns = stamp_ns;
                     }
                 }
                 break;
