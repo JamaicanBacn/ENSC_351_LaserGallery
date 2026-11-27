@@ -26,7 +26,6 @@ void EntityInit( TargetEntity* target , IRReceiver* rec , LED* led_addr , waveda
     target->TargetNumber = led_addr->RING_NUMBER;
     
     target->Actived_timestamp = 0;
-    target->Current_timeStamp = 0;
     target->active = 0;
 
     target->PointValue = 10;
@@ -60,7 +59,7 @@ int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points 
 
     resetReceiver( target->rec ); // Make sure no information from last check comes through again
 
-    target->Actived_timestamp = monotonic_ns(); // Time that the target was activated
+    target->Actived_timestamp = monotonic_ms(); // Time that the target was activated
     target->deadline_ms = target->Actived_timestamp + duration_ms * UINT64_C(1000000); // The deadline for a valid shot
     
     if (atomic_exchange(&target->worker_running, true)) {
@@ -123,7 +122,7 @@ static void *target_ir_worker(void *arg)
     AudioMixer_queueSound(target->ActivateSound);
 
     while (monotonic_ms() < target->deadline_ms) {
-        int result = read_IR_REC(target->rec);
+        int result = read_IR_REC(target->rec , target->Actived_timestamp , target->deadline_ms);
 
         if (result < 0) {
             accepted = -1;

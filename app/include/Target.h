@@ -19,7 +19,6 @@ typedef struct _Entity
 
     // controls the time that it is activated
     uint64_t Actived_timestamp;
-    uint64_t Current_timeStamp;
 
     //Sounds
     wavedata_t* HitSound;

@@ -88,7 +88,12 @@ int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStam
 
         uint64_t  edge_time_diff = stamp_ns - rec->prev_stamp_ns;
 
-        //check to make sure bust is in a valid seciton
+        //check to make sure edged happened after Activation of the Target
+
+        if( stamp_ns < ActivatedStamp || DealineStamp < stamp_ns)
+        {
+            continue;
+        }
 
         switch ( rec->state )
         {
