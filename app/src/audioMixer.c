@@ -5,6 +5,7 @@
 #include <alsa/asoundlib.h>
 #include <stdbool.h>
 #include <pthread.h>
+#include <stdatomic.h>
 #include <limits.h>
 #include <alloca.h> // needed for mixer
 
@@ -39,7 +40,7 @@ static playbackSound_t soundBites[MAX_SOUND_BITES];
 
 // Playback threading
 void* playbackThread(void* arg);
-static _Bool stopping = false;
+static atomic_bool stopping = false;
 static pthread_t playbackThreadId;
 static pthread_mutex_t audioMutex = PTHREAD_MUTEX_INITIALIZER;
 

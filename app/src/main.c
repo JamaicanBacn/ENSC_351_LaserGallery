@@ -87,7 +87,7 @@ int main()
 
     //Init the gpiochup structure
 
-    GameSetup(offsets);
+    GameSetup(offsets );
 
     ActivateTarget( &Targets[0] , 5000 , 50);
 
@@ -107,8 +107,14 @@ void CompleteGameClean()
     CollectWorkerThreads();
     audio_cleanup();
 
-    for( int i  = 0; i < RINGS ; i++)
+    for (int i = 0; i < RINGS; i++) 
     {
+        if (receivers[i].events != NULL) 
+        {
+            gpiod_edge_event_buffer_free(receivers[i].events);
+            receivers[i].events = NULL;
+        }
+
         gpio_cleanup(&receivers[i].gpio);
     }
 
@@ -133,14 +139,22 @@ void GameSetup( uint32_t* offsets)
     led_init();
     AudioMixer_queueSound(&sounds[AUDIO_GAME_MUSIC]);
 
-    pthread_create( &LedID , NULL , ledWorker , NULL );
+    if( pthread_create( &LedID , NULL , ledWorker , NULL ) < 0)
+    {
+        //pthread failed
+        exit(1);
+    }
     
 
     //Init all of the receivers
 
     for( int i = 0; i < RINGS ; i++)
     {
-        ir_receiver_init( &receivers[i] , GPIOCHIP_2_PATH , offsets[i]);
+        if( ir_receiver_init( &receivers[i] , GPIOCHIP_2_PATH , offsets[i]) < 0 )
+        {
+            // if the Ir rec fails then end the program
+            exit(1);
+        }
     }
 
     EntityInit(&Targets[0] , &receivers[0] , &LED_RINGS[0] , &sounds[AUDIO_POT_BREAK] , &sounds[AUDIO_POT_SPAWN]);
