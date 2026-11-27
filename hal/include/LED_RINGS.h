@@ -55,7 +55,7 @@ extern RGB LED_RINGS[RINGS];
 extern uint8_t frame[2 * RESET_BYTES + RINGS * PIXELS_PER_RING * 9];
 
 void led_init();
-void set_led( LED led);
+void set_led( int ring , RGB rgb);
 void update_leds();
 void led_close();
 

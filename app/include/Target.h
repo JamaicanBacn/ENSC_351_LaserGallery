@@ -34,6 +34,9 @@ typedef struct _Entity
 
 } TargetEntity;
 
+extern uint64_t P1_points;
+extern uint64_t P2_points;
+
 void EntityInit( TargetEntity* Entity, IRReceiver* rec , LED* led_addr , wavedata_t* hit_sound , wavedata_t* activate_sound);
 void ActivateTarget();
 void DeactivateTarget();

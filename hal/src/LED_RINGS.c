@@ -45,11 +45,11 @@ void led_init()
     }
 }
 
-void set_led( LED led )
+void set_led( int ring , RGB rgb )
 {
     // before changing the color make thread safe
     pthread_mutex_lock(&led_lock);
-    LED_RINGS[led.RING_NUMBER] = led.rgb;
+    LED_RINGS[ring] = rgb;
     pthread_mutex_unlock(&led_lock);
 
 }
