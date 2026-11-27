@@ -63,6 +63,7 @@ int main()
     //Init the gpiochup structure
 
     audio_init();
+    led_init();
     AudioMixer_queueSound(&sounds[AUDIO_GAME_MUSIC]);
 
     pthread_create( &LedID , NULL , ledWorker , NULL );

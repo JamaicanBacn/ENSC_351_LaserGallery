@@ -31,7 +31,7 @@
 #define LED_PRINT_FORMAT " fd : %d\n USB_START : %d\n USB_CMD : %d\n USB_SIZE : %d\n RING : %d\n RED : %d\n GREEN :  %d\n BLUE : %d\n"
 
 enum {
-    RINGS = 4,
+    RINGS = 5,
     PIXELS_PER_RING = 8,
     RESET_BYTES = 128
 };
