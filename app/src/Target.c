@@ -30,7 +30,7 @@ void EntityInit( TargetEntity* target , IRReceiver* rec , LED* led_addr , waveda
 
     target->PointValue = 10;
 
-    atomic_init(&target->worker_running, false);
+    target->IR_thread = 0;
 
     set_led(target->TargetNumber , BLUE);
 }
@@ -59,48 +59,10 @@ int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points 
 {
     //reset the state
 
-    if (atomic_exchange(&target->worker_running, true))
-    {
-        return EBUSY;
-    }
+    pthread_create( &target->IR_thread , NULL , target_ir_worker , NULL);
+    pthread_join(target->IR_thread , NULL);
 
-    resetReceiver( target->rec ); // Make sure no information from last check comes through again
-
-    target->Actived_timestamp = monotonic_ns(); // Time that the target was activated
-    target->deadline_ns = target->Actived_timestamp + duration_ms * UINT64_C(1000000); // The deadline for a valid shot
-    
-
-    pthread_attr_t attr;
-    int err = pthread_attr_init(&attr);
-    if (err != 0) {
-        atomic_store(&target->worker_running, false);
-        return err;
-    }
-
-    err = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-    if (err != 0) {
-        pthread_attr_destroy(&attr);
-        atomic_store(&target->worker_running, false);
-        return err;
-    }
-
-    target->PointValue = points;
-    target->ir_result = NO_HIT;
-
-    set_led(target->TargetNumber, RED);
-    target->active = true;
-
-    pthread_t thread;
-    err = pthread_create(&thread, &attr, target_ir_worker, target);
-    pthread_attr_destroy(&attr);
-
-    if (err != 0) {
-        DeactivateTarget(target);
-        atomic_store(&target->worker_running, false);
-    }
-
-    return err;
-
+    return 0;
 }
 
 
@@ -146,14 +108,13 @@ static void *target_ir_worker(void *arg)
         pthread_mutex_unlock(&PointMutex);
 
         if (accepted == P1_HIT) {
-           // flash_seq(target, BLUE, GREEN);
+           flash_seq(target, BLUE, GREEN);
         } else {
-            //flash_seq(target, YELLOW, WHITE);
+            flash_seq(target, YELLOW, WHITE);
         }
     }
 
     DeactivateTarget(target);
-    atomic_store(&target->worker_running, false);
     return NULL;
 }
 

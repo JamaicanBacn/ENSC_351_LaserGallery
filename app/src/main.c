@@ -109,7 +109,6 @@ int main()
 
 void CompleteGameClean()
 {
-    CollectWorkerThreads();
     audio_cleanup();
 
     for (int i = 0; i < RINGS; i++) 
@@ -126,17 +125,6 @@ void CompleteGameClean()
     END();
 }
 
-void CollectWorkerThreads()
-{
-
-    // wait for each worker thread that is running to end before the program ends
-
-    for (int i = 0; i < RINGS; i++) {
-        while (atomic_load(&Targets[i].worker_running)) {
-            sleepForMs(10);
-        }
-    }
-}
 
 void GameSetup( uint32_t* offsets)
 {

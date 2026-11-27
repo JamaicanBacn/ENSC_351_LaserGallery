@@ -137,8 +137,8 @@ int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStam
                     }
                     else
                     {
-                        rec->state = IDLE_STATE;
-                        rec->prev_stamp_ns = 0;
+                        rec->state = WAIT_PREAMBLE_RISING;
+                        rec->prev_stamp_ns = stamp_ns;
                     }
                 }
                 break;

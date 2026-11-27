@@ -29,7 +29,7 @@ typedef struct _Entity
 
     uint64_t PointValue;
 
-    atomic_bool worker_running;
+    pthread_t IR_thread;
     uint64_t deadline_ns;
     int ir_result;
 
