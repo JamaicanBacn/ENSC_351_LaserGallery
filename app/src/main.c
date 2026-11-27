@@ -138,13 +138,7 @@ void GameSetup( uint32_t* offsets)
     audio_init();
     led_init();
     AudioMixer_queueSound(&sounds[AUDIO_GAME_MUSIC]);
-
-    if( pthread_create( &LedID , NULL , ledWorker , NULL ) != 0)
-    {
-        //pthread failed
-        exit(1);
-    }
-    
+ 
 
     //Init all of the receivers
 
@@ -163,5 +157,10 @@ void GameSetup( uint32_t* offsets)
     EntityInit(&Targets[3] , &receivers[3] , &LED_RINGS[3] , &sounds[AUDIO_MUMMY_HIT] , &sounds[AUDIO_MUMMY_SPAWN]);
     EntityInit(&Targets[4] , &receivers[4] , &LED_RINGS[4] , &sounds[AUDIO_POT_BREAK] , &sounds[AUDIO_POT_SPAWN]);
 
-
+    if( pthread_create( &LedID , NULL , ledWorker , NULL ) != 0)
+    {
+        //pthread failed
+        exit(1);
+    }
+    
 }
