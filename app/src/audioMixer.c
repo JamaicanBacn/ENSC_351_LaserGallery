@@ -87,7 +87,13 @@ void AudioMixer_init(void)
 	playbackBuffer = malloc(playbackBufferSize * sizeof(*playbackBuffer));
 
 	// Launch playback thread:
-	pthread_create(&playbackThreadId, NULL, playbackThread, NULL);
+	int thread_err = pthread_create(&playbackThreadId, NULL, playbackThread, NULL);
+
+	if( thread_err != 0)
+	{
+		perror("AUDIO PLAYBACK THREAD CREATE FAILED");
+		exit(1);
+	}
 }
 
 

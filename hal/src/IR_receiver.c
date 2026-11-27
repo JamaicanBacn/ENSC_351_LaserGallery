@@ -88,6 +88,8 @@ int read_IR_REC(IRReceiver *rec)
 
         uint64_t  edge_time_diff = stamp_ns - rec->prev_stamp_ns;
 
+        //check to make sure bust is in a valid seciton
+
         switch ( rec->state )
         {
             case IDLE_STATE:
@@ -189,5 +191,15 @@ int read_IR_REC(IRReceiver *rec)
     }      // End of the event for loop.
 
     return hits;
+}
+
+void resetReceiver(IRReceiver* rec)
+{
+    rec->state = IDLE_STATE;
+    rec->prev_stamp_ns = 0;
+    rec->playerID = 0;
+    rec->bits_received = 0;
+
+    return;
 }
 

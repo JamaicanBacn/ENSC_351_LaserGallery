@@ -139,7 +139,7 @@ void GameSetup( uint32_t* offsets)
     led_init();
     AudioMixer_queueSound(&sounds[AUDIO_GAME_MUSIC]);
 
-    if( pthread_create( &LedID , NULL , ledWorker , NULL ) < 0)
+    if( pthread_create( &LedID , NULL , ledWorker , NULL ) != 0)
     {
         //pthread failed
         exit(1);

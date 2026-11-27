@@ -56,6 +56,12 @@ static uint64_t monotonic_ms(void)
 
 int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points )
 {
+    //reset the state
+
+    resetReceiver( target->rec ); // Make sure no information from last check comes through again
+
+    target->Actived_timestamp = monotonic_ns(); // Time that the target was activated
+    target->deadline_ms = target->Actived_timestamp + duration_ms * UINT64_C(1000000); // The deadline for a valid shot
     
     if (atomic_exchange(&target->worker_running, true)) {
         return EBUSY;
@@ -110,8 +116,11 @@ void *ledWorker( void* args )
 
 static void *target_ir_worker(void *arg)
 {
+
     TargetEntity *target = arg;
     int accepted = NO_HIT;
+
+    AudioMixer_queueSound(target->ActivateSound);
 
     while (monotonic_ms() < target->deadline_ms) {
         int result = read_IR_REC(target->rec);
@@ -135,6 +144,9 @@ static void *target_ir_worker(void *arg)
 
     if (accepted == P1_HIT || accepted == P2_HIT) {
         pthread_mutex_lock(&PointMutex);
+
+        AudioMixer_queueSound(target->HitSound);
+
         if (accepted == P1_HIT) {
             P1_points += target->PointValue;
         } else {

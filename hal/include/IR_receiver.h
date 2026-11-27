@@ -60,5 +60,6 @@ extern IRReceiver receivers[RINGS];
 
 int ir_receiver_init( IRReceiver *rec , char* chip_path , unsigned int offset);
 int read_IR_REC(IRReceiver *rec);
+void resetReceiver(IRReceiver* rec);
 
 #endif
