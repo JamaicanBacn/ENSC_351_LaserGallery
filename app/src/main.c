@@ -129,8 +129,7 @@ int main()
     sleepForMs(5000);
 
    
-
-    printf(" FINAL SCORES : Player1 -> PRIu64 , Player2 -> %lu ");
+    printf("FINAL SCORES: Player1 -> %" PRIu64 ", Player2 -> %" PRIu64 "\n", P1_points, P2_points);
 
 
     CompleteGameClean();    
