@@ -8,6 +8,8 @@ pthread_mutex_t PointMutex = PTHREAD_MUTEX_INITIALIZER;
 uint64_t P1_points = 0;
 uint64_t P2_points = 0;
 
+atomic_bool stop = false;
+
 
 void EntityInit( TargetEntity* target , IRReceiver* rec , LED* led_addr , wavedata_t* hit_sound , wavedata_t* activate_sound)
 {
@@ -88,10 +90,13 @@ int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points 
 
 static void *ledWorker()
 {
-    while(1)
+    while( !stop )
     {
         update_leds();
+        sleepForMs(20);
     }
+
+    return NULL;
 }
 
 static void *target_ir_worker(void *arg)
@@ -161,4 +166,9 @@ void flash_seq( TargetEntity* target , RGB colour1 , RGB colour2)
     }
 
     return;
+}
+
+void END()
+{
+    stop = true;
 }

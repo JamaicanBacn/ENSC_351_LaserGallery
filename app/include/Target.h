@@ -39,6 +39,8 @@ typedef struct _Entity
 extern uint64_t P1_points;
 extern uint64_t P2_points;
 
+extern atomic_bool stop;
+
 void EntityInit( TargetEntity* Entity, IRReceiver* rec , LED* led_addr , wavedata_t* hit_sound , wavedata_t* activate_sound);
 int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points );
 void DeactivateTarget(TargetEntity* target);
