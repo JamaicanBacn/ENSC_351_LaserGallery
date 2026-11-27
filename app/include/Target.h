@@ -7,6 +7,7 @@
 #include "audioMixer.h"
 #include "IR_receiver.h"
 #include "LED_RINGS.h"
+#include <stdatomic.h>
 
 typedef struct _Entity
 {
@@ -29,8 +30,7 @@ typedef struct _Entity
 
     uint64_t PointValue;
 
-    pthread_t ir_thread;
-    bool ir_thread_started;
+    atomic_bool worker_running;
     uint64_t deadline_ms;
     int ir_result;
 

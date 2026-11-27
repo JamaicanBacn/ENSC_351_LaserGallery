@@ -19,9 +19,15 @@
 
 
 // Some base colours for RGB STRUCT
-#define RED     (RGB){ 255 , 0   , 0     }
-#define GREEN   (RGB){ 0   , 255 , 0     }
-#define BLUE    (RGB){ 0   , 0   , 255   }
+
+#define RED     (RGB){ 255 , 0   , 0   }
+#define GREEN   (RGB){ 0   , 255 , 0   }
+#define BLUE    (RGB){ 0   , 0   , 255 }
+#define PURPLE  (RGB){ 128 , 0   , 255 }
+#define WHITE   (RGB){ 255 , 255 , 255 }
+#define YELLOW  (RGB){ 255 , 255 , 0   }
+#define CYAN    (RGB){ 0   , 255 , 255 }
+#define OFF     (RGB){ 0   , 0   , 0   }
 
 
 #define LED_PRINT_FORMAT " fd : %d\n USB_START : %d\n USB_CMD : %d\n USB_SIZE : %d\n RING : %d\n RED : %d\n GREEN :  %d\n BLUE : %d\n"

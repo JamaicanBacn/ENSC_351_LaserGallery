@@ -46,26 +46,43 @@ static uint64_t monotonic_ms(void)
 
 int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points )
 {
-    if (target->ir_thread_started) {
+    
+    if (atomic_exchange(&target->worker_running, true)) {
         return EBUSY;
     }
 
-    target->ir_result = NO_HIT;
-    target->deadline_ms = monotonic_ms() + duration_ms;
-    target->PointValue = points;
-
-
-    int err = pthread_create(&target->ir_thread, NULL,
-                             target_ir_worker, target);
+    pthread_attr_t attr;
+    int err = pthread_attr_init(&attr);
     if (err != 0) {
+        atomic_store(&target->worker_running, false);
         return err;
     }
 
-    target->ir_thread_started = true;
+    err = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+    if (err != 0) {
+        pthread_attr_destroy(&attr);
+        atomic_store(&target->worker_running, false);
+        return err;
+    }
+
+    target->PointValue = points;
+    target->ir_result = NO_HIT;
+
+    set_led(target->TargetNumber, RED);
+    update_leds();
     target->active = true;
-    AudioMixer_queueSound(target->ActivateSound);
-    
-    return 0;
+    target->deadline_ms = monotonic_ms() + duration_ms;
+
+    pthread_t thread;
+    err = pthread_create(&thread, &attr, target_ir_worker, target);
+    pthread_attr_destroy(&attr);
+
+    if (err != 0) {
+        DeactivateTarget(target);
+        atomic_store(&target->worker_running, false);
+    }
+
+    return err;
 
 }
 
@@ -94,41 +111,23 @@ static void *target_ir_worker(void *arg)
     if( result == P1_HIT )
     {
         P1_points += target->PointValue;
+        flash_seq(target->TargetNumber , BLUE , GREEN );
     }
     else if( result == P2_HIT)
     {
         P2_points += target->PointValue;
+        flash_seq(target->TargetNumber , YELLOW, WHITE);
     }
 
     pthread_mutex_unlock(&PointMutex);
 
-
-
-
-
+    DeactivateTarget(target);  // Restore idle colour, flush LEDs, clear active.
+    atomic_store(&target->worker_running, false);
     return NULL;
 }
 
 
 // Call from main after starting all the targets you want active.
-int FinishTarget(TargetEntity *target)
-{
-    if (!target->ir_thread_started) {
-        return -1;
-    }
-
-    if (pthread_join(target->ir_thread, NULL) != 0) {
-        return -1;
-    }
-
-    target->ir_thread_started = false;
-    return target->ir_result;
-}
-
-void Closetarget()
-{
-
-}
 
 void flash_seq( TargetEntity* target , RGB colour1 , RGB colour2)
 {
