@@ -6,11 +6,17 @@
 // The default kernel queue holds 16 events for one requested line.
 #define IR_EDGE_BATCH_SIZE 16
 
+enum {
+    // Keep a gap between the accepted 400 us and 800 us bit widths.
+    IR_PULSE_TOLERANCE_NS = 150 * US,
+    IR_GAP_TOLERANCE_NS = 250 * US
+};
+
 IRReceiver receivers[RINGS] = {0};
 
-bool in_range( uint64_t target , uint64_t value)
+static bool in_range(uint64_t target, uint64_t value, uint64_t tolerance)
 {
-    return target - _100US <= value && target + _100US >= value;
+    return target - tolerance <= value && value <= target + tolerance;
 }
 
 int ir_receiver_init(IRReceiver *rec, char *chip_path, unsigned int offset)
@@ -36,8 +42,18 @@ int ir_receiver_init(IRReceiver *rec, char *chip_path, unsigned int offset)
     return 0;
 }
 
+void ir_receiver_cleanup(IRReceiver *rec)
+{
+    if (rec->events != NULL) {
+        gpiod_edge_event_buffer_free(rec->events);
+        rec->events = NULL;
+    }
+    gpio_cleanup(&rec->gpio);
+}
+
 int ir_receiver_prepare(IRReceiver *rec)
 {
+    rec->edges_read = 0;
     resetReceiver(rec);
 
     // Discard the inactive target's queued edges before opening its shot window.
@@ -78,6 +94,7 @@ int read_IR_REC(IRReceiver *rec, uint64_t activated_ns, uint64_t deadline_ns,
         return -1;
     }
 
+    rec->edges_read += count;
     for (int i = 0; i < count; i++) {
         // Get the event and its type.
         struct gpiod_edge_event *event =
@@ -108,7 +125,7 @@ int read_IR_REC(IRReceiver *rec, uint64_t activated_ns, uint64_t deadline_ns,
             case WAIT_PREAMBLE_RISING:
                 if( type == GPIOD_EDGE_EVENT_RISING_EDGE)
                 {
-                    if( in_range(_500US , edge_time_diff) )
+                    if (in_range(_500US, edge_time_diff, IR_PULSE_TOLERANCE_NS))
                     {       
                         rec->prev_stamp_ns = stamp_ns;
                         rec->state = WAIT_PREABMLE_GAP;
@@ -123,7 +140,7 @@ int read_IR_REC(IRReceiver *rec, uint64_t activated_ns, uint64_t deadline_ns,
             case WAIT_PREABMLE_GAP:
                 if( type == GPIOD_EDGE_EVENT_FALLING_EDGE)
                 {
-                    if( in_range(_2MS , edge_time_diff))
+                    if (in_range(_2MS, edge_time_diff, IR_GAP_TOLERANCE_NS))
                     {
                         rec->state = WAIT_BIT_RISING;
                         rec->prev_stamp_ns = stamp_ns;
@@ -142,11 +159,11 @@ int read_IR_REC(IRReceiver *rec, uint64_t activated_ns, uint64_t deadline_ns,
                 {
                     uint8_t bit = 0;
 
-                    if( in_range( _800US , edge_time_diff))
+                    if (in_range(_800US, edge_time_diff, IR_PULSE_TOLERANCE_NS))
                     {
                         bit = 1;
                     }
-                    else if( in_range( _400US , edge_time_diff))
+                    else if (in_range(_400US, edge_time_diff, IR_PULSE_TOLERANCE_NS))
                     {
                         bit = 0;
                     }
@@ -186,7 +203,7 @@ int read_IR_REC(IRReceiver *rec, uint64_t activated_ns, uint64_t deadline_ns,
                 break;
                 case WAIT_BIT_FALLING:
                     if (type == GPIOD_EDGE_EVENT_FALLING_EDGE) {
-                        if (in_range(_1MS, edge_time_diff)) {
+                        if (in_range(_1MS, edge_time_diff, IR_GAP_TOLERANCE_NS)) {
                             rec->state = WAIT_BIT_RISING;
                         } else {
                             // Reuse this falling edge as a possible preamble start.

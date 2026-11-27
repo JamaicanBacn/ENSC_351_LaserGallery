@@ -12,6 +12,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <inttypes.h>
+#include <time.h>
 
 #define GPIO_PATH   "/dev/gpiochip2"
 #define SECOND 1000000
@@ -52,11 +53,18 @@ const GPIOCHIP2_OFFSETS gpiochip2_offsets = {
     .GPIO_21_OFFSET = 9
 };
 
+static const uint32_t target_offsets[RINGS] = {
+    gpiochip2_offsets.GPIO_14_OFFSET,
+    gpiochip2_offsets.GPIO_15_OFFSET,
+    gpiochip2_offsets.GPIO_18_OFFSET,
+    gpiochip2_offsets.GPIO_17_OFFSET,
+    gpiochip2_offsets.GPIO_12_OFFSET
+};
 TargetEntity Targets[RINGS];
 
 int CompleteGameClean(void);
 
-void GameSetup(uint32_t* offsets);
+void GameSetup(void);
 
 void Game1();
 void Game2();
@@ -81,40 +89,77 @@ static int test_ring(int ring)
     return EXIT_SUCCESS;
 }
 
-int main(int argc, char *argv[])
+static uint64_t monotonic_ns(void)
 {
-    if (argc != 1) {
-        if (argc == 3 && strcmp(argv[1], "--test-ring") == 0) {
-            char *end;
-            long ring = strtol(argv[2], &end, 10);
-            if (*end == '\0' && ring >= 1 && ring <= RINGS) {
-                return test_ring((int)ring - 1);
-            }
-        }
-        fprintf(stderr, "Usage: %s [--test-ring 1-%d]\n", argv[0], RINGS);
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    return (uint64_t)now.tv_sec * UINT64_C(1000000000) + (uint64_t)now.tv_nsec;
+}
+
+static int test_ir(int target)
+{
+    IRReceiver receiver;
+    if (ir_receiver_init(&receiver, GPIOCHIP_2_PATH, target_offsets[target]) < 0) {
+        return EXIT_FAILURE;
+    }
+    if (ir_receiver_prepare(&receiver) < 0) {
+        ir_receiver_cleanup(&receiver);
         return EXIT_FAILURE;
     }
 
- //make an array of the offsets for the rotary encoder
-    uint32_t offsets[RINGS] = { gpiochip2_offsets.GPIO_14_OFFSET,
-                                gpiochip2_offsets.GPIO_15_OFFSET,
-                                gpiochip2_offsets.GPIO_18_OFFSET,
-                                gpiochip2_offsets.GPIO_17_OFFSET,
-                                gpiochip2_offsets.GPIO_12_OFFSET };
+    printf("Listening to target %d (GPIO line %u) for 10 seconds\n",
+           target + 1, receiver.offset);
+    fflush(stdout);
+    uint64_t start_ns = monotonic_ns();
+    uint64_t deadline_ns = start_ns + UINT64_C(10000000000);
+    unsigned int hits = 0;
+    int result = NO_HIT;
+    while (monotonic_ns() < deadline_ns) {
+        uint64_t hit_stamp_ns;
+        result = read_IR_REC(&receiver, start_ns, deadline_ns, &hit_stamp_ns);
+        if (result < 0) {
+            break;
+        }
+        if (result == P1_HIT || result == P2_HIT) {
+            ++hits;
+            printf("Player %d hit\n", result);
+            fflush(stdout);
+        }
+    }
+    printf("GPIO edges read: %" PRIu64 ", decoded hits: %u\n", receiver.edges_read, hits);
+    ir_receiver_cleanup(&receiver);
+    return result < 0 ? EXIT_FAILURE : EXIT_SUCCESS;
+}
 
-    //Init the gpiochup structure
+int main(int argc, char *argv[])
+{
+    if (argc != 1) {
+        if (argc == 3) {
+            char *end;
+            long target = strtol(argv[2], &end, 10);
+            if (*end == '\0' && target >= 1 && target <= RINGS) {
+                int index = (int)target - 1;
+                if (strcmp(argv[1], "--test-ring") == 0) {
+                    return test_ring(index);
+                }
+                if (strcmp(argv[1], "--test-ir") == 0) {
+                    return test_ir(index);
+                }
+            }
+        }
+        fprintf(stderr, "Usage: %s [--test-ring|--test-ir 1-%d]\n", argv[0], RINGS);
+        return EXIT_FAILURE;
+    }
 
+    GameSetup();
 
-    GameSetup(offsets);
-
-    
     int status = EXIT_SUCCESS;
     int error = ActivateTarget(&Targets[0], 5000, 50);
     if (error != 0) {
         fprintf(stderr, "Could not activate target 1: %s\n", strerror(error));
         status = EXIT_FAILURE;
     }
-    error = ActivateTarget(&Targets[4], 3000, 10);
+    error = ActivateTarget(&Targets[4], 5000, 10);
     if (error != 0) {
         fprintf(stderr, "Could not activate target 5: %s\n", strerror(error));
         status = EXIT_FAILURE;
@@ -140,15 +185,8 @@ int CompleteGameClean(void)
 
     audio_cleanup();
 
-    for (int i = 0; i < RINGS; i++) 
-    {
-        if (receivers[i].events != NULL) 
-        {
-            gpiod_edge_event_buffer_free(receivers[i].events);
-            receivers[i].events = NULL;
-        }
-
-        gpio_cleanup(&receivers[i].gpio);
+    for (int i = 0; i < RINGS; ++i) {
+        ir_receiver_cleanup(&receivers[i]);
     }
 
     END();
@@ -156,7 +194,7 @@ int CompleteGameClean(void)
 }
 
 
-void GameSetup( uint32_t* offsets)
+void GameSetup(void)
 {
 
     audio_init();
@@ -168,7 +206,7 @@ void GameSetup( uint32_t* offsets)
 
     for( int i = 0; i < RINGS ; i++)
     {
-        if( ir_receiver_init( &receivers[i] , GPIOCHIP_2_PATH , offsets[i]) < 0 )
+        if( ir_receiver_init( &receivers[i] , GPIOCHIP_2_PATH , target_offsets[i]) < 0 )
         {
             // if the Ir rec fails then end the program
             exit(1);

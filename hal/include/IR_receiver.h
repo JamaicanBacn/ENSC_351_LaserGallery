@@ -48,6 +48,7 @@ typedef struct {
     GPIOCHIP gpio;  // gpio.request belongs to this target.
     unsigned int offset;
     struct gpiod_edge_event_buffer *events;
+    uint64_t edges_read;
     uint64_t prev_stamp_ns;
     uint8_t state;
 
@@ -61,6 +62,7 @@ typedef struct {
 extern IRReceiver receivers[RINGS];
 
 int ir_receiver_init( IRReceiver *rec , char* chip_path , unsigned int offset);
+void ir_receiver_cleanup(IRReceiver *rec);
 int ir_receiver_prepare(IRReceiver *rec);
 // On a hit, hit_stamp_ns receives the timestamp of the packet's final edge.
 int read_IR_REC(IRReceiver *rec, uint64_t activated_ns, uint64_t deadline_ns,
