@@ -64,16 +64,42 @@ static void sleepForMs(long long delayInMs)
     nanosleep(&reqDelay, (struct timespec *) NULL);
 }
 
-void CollectWorkerThreads()
+void CollectWorkerThreads();
+
+void CompleteGameClean();
+
+void GameSetup(uint32_t* offsets);
+
+void Game1();
+void Game2();
+void Game3();
+void Game5();
+void Game6();
+
+int main()
 {
+ //make an array of the offsets for the rotary encoder
+    uint32_t offsets[RINGS] = { gpiochip2_offsets.GPIO_18_OFFSET,
+                                gpiochip2_offsets.GPIO_15_OFFSET,
+                                gpiochip2_offsets.GPIO_14_OFFSET,
+                                gpiochip2_offsets.GPIO_17_OFFSET,
+                                gpiochip2_offsets.GPIO_12_OFFSET };
 
-    // wait for each worker thread that is running to end before the program ends
+    //Init the gpiochup structure
 
-    for (int i = 0; i < RINGS; i++) {
-        while (atomic_load(&Targets[i].worker_running)) {
-            sleepForMs(10);
-        }
-    }
+    GameSetup(offsets);
+
+    ActivateTarget( &Targets[0] , 5000 , 50);
+
+    sleepForMs(10000);
+
+    ActivateTarget( &Targets[0] , 3000 , 10);
+
+    sleepForMs(5000);
+
+    CompleteGameClean();    
+
+    printf("FINAL SCORES: Player1 -> %" PRIu64 ", Player2 -> %" PRIu64 "\n", P1_points, P2_points);
 }
 
 void CompleteGameClean()
@@ -89,17 +115,20 @@ void CompleteGameClean()
     END();
 }
 
-int main()
+void CollectWorkerThreads()
 {
- //make an array of the offsets for the rotary encoder
-    uint32_t offsets[RINGS] = { gpiochip2_offsets.GPIO_18_OFFSET,
-                                gpiochip2_offsets.GPIO_15_OFFSET,
-                                gpiochip2_offsets.GPIO_14_OFFSET,
-                                gpiochip2_offsets.GPIO_17_OFFSET,
-                                gpiochip2_offsets.GPIO_12_OFFSET };
 
-    //Init the gpiochup structure
+    // wait for each worker thread that is running to end before the program ends
 
+    for (int i = 0; i < RINGS; i++) {
+        while (atomic_load(&Targets[i].worker_running)) {
+            sleepForMs(10);
+        }
+    }
+}
+
+void GameSetup( uint32_t* offsets)
+{
     audio_init();
     led_init();
     AudioMixer_queueSound(&sounds[AUDIO_GAME_MUSIC]);
@@ -120,17 +149,5 @@ int main()
     EntityInit(&Targets[3] , &receivers[3] , &LED_RINGS[3] , &sounds[AUDIO_MUMMY_HIT] , &sounds[AUDIO_MUMMY_SPAWN]);
     EntityInit(&Targets[4] , &receivers[4] , &LED_RINGS[4] , &sounds[AUDIO_POT_BREAK] , &sounds[AUDIO_POT_SPAWN]);
 
-    ActivateTarget( &Targets[0] , 5000 , 50);
 
-    sleepForMs(10000);
-
-    ActivateTarget( &Targets[0] , 3000 , 10);
-
-    sleepForMs(5000);
-
-   
-    printf("FINAL SCORES: Player1 -> %" PRIu64 ", Player2 -> %" PRIu64 "\n", P1_points, P2_points);
-
-
-    CompleteGameClean();    
 }

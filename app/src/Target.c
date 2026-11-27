@@ -6,7 +6,7 @@
 
 pthread_mutex_t PointMutex = PTHREAD_MUTEX_INITIALIZER;
 
-pthread_t LedID = -1;
+pthread_t LedID = 0;
 
 uint64_t P1_points = 0;
 uint64_t P2_points = 0;
@@ -178,13 +178,6 @@ void flash_seq( TargetEntity* target , RGB colour1 , RGB colour2)
 
 void END()
 {
-
-    if(LedID == -1)
-    {
-        // Led pid was never made
-        return;
-    }
-
     stop = true;
     pthread_join(LedID , NULL);
     led_close();
