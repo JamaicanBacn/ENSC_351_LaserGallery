@@ -2,6 +2,7 @@
 #include "audioMixer.h"
 #include "errno.h"
 #include "LED_RINGS.h"
+#include <inttypes.h>
 #include <stdatomic.h>
 
 pthread_mutex_t PointMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -34,7 +35,7 @@ void EntityInit( TargetEntity* target , IRReceiver* rec , LED* led_addr , waveda
 
     target->PointValue = 10;
 
-    set_led(target->TargetNumber, OFF);
+    set_led(target->TargetNumber, BLUE);
 }
 
 static void sleepForMs(long long delayInMs)
@@ -130,6 +131,7 @@ static void *target_ir_worker(void *arg)
     set_led(target->TargetNumber, RED);
     uint64_t deadline_ns = monotonic_ns() + target->duration_ms * UINT64_C(1000000);
     AudioMixer_queueSound(target->ActivateSound);
+    const bool trace_hits = getenv("GALLERY_TRACE_HITS") != NULL;
 
     while (monotonic_ns() < deadline_ns)
     {
@@ -141,10 +143,17 @@ static void *target_ir_worker(void *arg)
             break;
         }
 
-        if ((result == P1_HIT || result == P2_HIT) &&
-            score_hit(target, result, hit_stamp_ns)) {
-            accepted = result;
-            break;
+        if (result == P1_HIT || result == P2_HIT) {
+            bool scored = score_hit(target, result, hit_stamp_ns);
+            if (trace_hits) {
+                fprintf(stderr, "Target %u, GPIO %u: player %d hit at %" PRIu64 " ns (%s)\n",
+                        (unsigned int)target->TargetNumber + 1, target->rec->offset,
+                        result, hit_stamp_ns, scored ? "flash" : "duplicate");
+            }
+            if (scored) {
+                accepted = result;
+                break;
+            }
         }
     }
     
@@ -182,7 +191,7 @@ int WaitForTarget(TargetEntity *target)
 
  void DeactivateTarget(TargetEntity* target)
  {
-    set_led(target->TargetNumber, OFF);
+    set_led(target->TargetNumber, BLUE);
  }
 
 void flash_seq( TargetEntity* target , RGB colour1 , RGB colour2)
