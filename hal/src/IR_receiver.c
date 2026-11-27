@@ -51,7 +51,8 @@ int ir_receiver_prepare(IRReceiver *rec)
     return 0;
 }
 
-int read_IR_REC(IRReceiver *rec, uint64_t activated_ns, uint64_t deadline_ns)
+int read_IR_REC(IRReceiver *rec, uint64_t activated_ns, uint64_t deadline_ns,
+                uint64_t *hit_stamp_ns)
 {
     // The receiver is active-low: a falling edge starts each pulse.
     int ready = gpiod_line_request_wait_edge_events(
@@ -167,11 +168,13 @@ int read_IR_REC(IRReceiver *rec, uint64_t activated_ns, uint64_t deadline_ns)
                         
                         if (playerID == PLAYER1_CODE)
                         {
+                            *hit_stamp_ns = stamp_ns;
                             return P1_HIT;
                         }
 
                         if( playerID == PLAYER2_CODE)
                         {
+                            *hit_stamp_ns = stamp_ns;
                             return P2_HIT;
                         }
 

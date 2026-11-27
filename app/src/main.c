@@ -64,8 +64,37 @@ void Game3();
 void Game5();
 void Game6();
 
-int main()
+static int test_ring(int ring)
 {
+    led_init();
+    for (int i = 0; i < RINGS; ++i) {
+        set_led(i, BLUE);
+    }
+
+    TargetEntity target = {.TargetNumber = LED_RINGS[ring].RING_NUMBER};
+    printf("Flashing only ring %d (first blue/green, then yellow/white)\n", ring + 1);
+    fflush(stdout);
+    flash_seq(&target, BLUE, GREEN);
+    flash_seq(&target, YELLOW, WHITE);
+    DeactivateTarget(&target);
+    led_close();
+    return EXIT_SUCCESS;
+}
+
+int main(int argc, char *argv[])
+{
+    if (argc != 1) {
+        if (argc == 3 && strcmp(argv[1], "--test-ring") == 0) {
+            char *end;
+            long ring = strtol(argv[2], &end, 10);
+            if (*end == '\0' && ring >= 1 && ring <= RINGS) {
+                return test_ring((int)ring - 1);
+            }
+        }
+        fprintf(stderr, "Usage: %s [--test-ring 1-%d]\n", argv[0], RINGS);
+        return EXIT_FAILURE;
+    }
+
  //make an array of the offsets for the rotary encoder
     uint32_t offsets[RINGS] = { gpiochip2_offsets.GPIO_14_OFFSET,
                                 gpiochip2_offsets.GPIO_15_OFFSET,
