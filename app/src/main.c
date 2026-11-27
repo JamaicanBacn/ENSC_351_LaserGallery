@@ -52,6 +52,17 @@ const GPIOCHIP2_OFFSETS gpiochip2_offsets = {
 
 TargetEntity Targets[RINGS];
 
+static void sleepForMs(long long delayInMs)
+{
+    const long long NS_PER_MS = 1000 * 1000;
+    const long long NS_PER_SECOND = 1000000000;
+    long long delayNs = delayInMs * NS_PER_MS;
+    int seconds = delayNs / NS_PER_SECOND;
+    int nanoseconds = delayNs % NS_PER_SECOND;
+    struct timespec reqDelay = {seconds, nanoseconds};
+    nanosleep(&reqDelay, (struct timespec *) NULL);
+}
+
 int main()
 {
  //make an array of the offsets for the rotary encoder
@@ -83,6 +94,14 @@ int main()
     EntityInit(&Targets[4] , &receivers[4] , &LED_RINGS[4] , &sounds[AUDIO_POT_BREAK] , &sounds[AUDIO_POT_SPAWN]);
 
     ActivateTarget( &Targets[0] , 5000 , 50);
+
+    sleepForMs(10000);
+
+    ActivateTarget( &Targets[0] , 3000 , 10);
+
+    sleepForMs(5000);
+
+    printf(" FINAL SCORES : Player1 -> %lu , Player2 -> %lu ");
 
     led_close();
     audio_cleanup();
