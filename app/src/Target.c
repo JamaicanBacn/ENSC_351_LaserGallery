@@ -46,13 +46,6 @@ static void sleepForMs(long long delayInMs)
     nanosleep(&reqDelay, (struct timespec *) NULL);
 }
 
-static uint64_t monotonic_ms(void)
-{
-    struct timespec now;
-    clock_gettime(CLOCK_MONOTONIC, &now);
-    return (uint64_t)now.tv_sec * 1000 + now.tv_nsec / 1000000;
-}
-
 static uint64_t monotonic_ns(void)
 {
     struct timespec now;
