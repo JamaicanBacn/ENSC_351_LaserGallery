@@ -7,8 +7,10 @@ void audio_init(void)
     static char *const wavPaths[AUDIO_SOUND_COUNT] = {
         [AUDIO_GAME_MUSIC]  = "wave-files/game_music.wav",
         [AUDIO_CELEBRATION] = "wave-files/game_celebration.wav",
-        [AUDIO_JAR_HIT]     = "wave-files/jar_hit.wav",
-        [AUDIO_MUMMY_HIT]   = "wave-files/mummy_hit.wav",
+        [AUDIO_POT_BREAK]   = "wave-files/pot_break.wav",
+        [AUDIO_MUMMY_DEATH] = "wave-files/mummy_death .wav",
+        [AUDIO_POT_SPAWN]   = "wave-files/pot_spawn.wav",
+        [AUDIO_MUMMY_SPAWN] = "wave-files/mummy_spawn.wav",
     };
 
     AudioMixer_init();
