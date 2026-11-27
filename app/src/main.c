@@ -50,10 +50,7 @@ const GPIOCHIP2_OFFSETS gpiochip2_offsets = {
     .GPIO_21_OFFSET = 9
 };
 
-IRReceiver receivers[RINGS];
 TargetEntity Targets[RINGS];
-
-
 
 int main()
 {
@@ -67,6 +64,8 @@ int main()
 
     audio_init();
     AudioMixer_queueSound(&sounds[AUDIO_GAME_MUSIC]);
+
+    pthread_create( &LedID , NULL , ledWorker , NULL );
     
 
     //Init all of the receivers
@@ -79,12 +78,16 @@ int main()
     EntityInit(&Targets[0] , &receivers[0] , &LED_RINGS[0] , &sounds[AUDIO_POT_BREAK] , &sounds[AUDIO_POT_SPAWN]);
     EntityInit(&Targets[1] , &receivers[1] , &LED_RINGS[1] , &sounds[AUDIO_MUMMY_HIT] , &sounds[AUDIO_MUMMY_SPAWN]);
     EntityInit(&Targets[2] , &receivers[2] , &LED_RINGS[2] , &sounds[AUDIO_POT_BREAK] , &sounds[AUDIO_POT_SPAWN]);
-    EntityInit(&Targets[1] , &receivers[1] , &LED_RINGS[1] , &sounds[AUDIO_MUMMY_HIT] , &sounds[AUDIO_MUMMY_SPAWN]);
-    EntityInit(&Targets[3] , &receivers[3] , &LED_RINGS[3] , &sounds[AUDIO_POT_BREAK] , &sounds[AUDIO_POT_SPAWN]);
+    EntityInit(&Targets[3] , &receivers[3] , &LED_RINGS[3] , &sounds[AUDIO_MUMMY_HIT] , &sounds[AUDIO_MUMMY_SPAWN]);
+    EntityInit(&Targets[4] , &receivers[4] , &LED_RINGS[4] , &sounds[AUDIO_POT_BREAK] , &sounds[AUDIO_POT_SPAWN]);
 
-    
+    ActivateTarget( &Targets[0] , 5000 , 50);
 
     led_close();
     audio_cleanup();
-    gpio_cleanup();
+
+    for( int i  = 0; i < RINGS ; i++)
+    {
+        gpio_cleanup(&receivers[i].gpio);
+    }
 }
