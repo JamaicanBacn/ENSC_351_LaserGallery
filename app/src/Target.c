@@ -3,7 +3,7 @@
 #include "errno.h"
 #include "LED_RINGS.h"
 
-pthread_mutex_t PointLock;
+pthread_mutex_t PointMutex = PTHREAD_MUTEX_INITIALIZER;
 
 uint64_t P1_points = 0;
 uint64_t P2_points = 0;
@@ -20,6 +20,8 @@ void EntityInit( TargetEntity* target , IRReceiver* rec , LED* led_addr , waveda
     target->Actived_timestamp = 0;
     target->Current_timeStamp = 0;
     target->active = 0;
+
+    target->PointValue = 10;
 
     set_led(target->TargetNumber , BLUE);
 }
@@ -42,7 +44,7 @@ static uint64_t monotonic_ms(void)
     return (uint64_t)now.tv_sec * 1000 + now.tv_nsec / 1000000;
 }
 
-void ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points )
+int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points )
 {
     if (target->ir_thread_started) {
         return EBUSY;
@@ -50,6 +52,7 @@ void ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points
 
     target->ir_result = NO_HIT;
     target->deadline_ms = monotonic_ms() + duration_ms;
+    target->PointValue = points;
 
 
     int err = pthread_create(&target->ir_thread, NULL,
@@ -72,8 +75,9 @@ static void *target_ir_worker(void *arg)
 
     set_led(target->TargetNumber , RED);
 
+    int result = NO_HIT;
     while (monotonic_ms() < target->deadline_ms) { // checks we are in the deadline
-        int result = read_IR_REC(target->rec);
+        result = read_IR_REC(target->rec);
 
         if (result < 0) {
             target->ir_result = -1;
@@ -81,23 +85,26 @@ static void *target_ir_worker(void *arg)
         }
 
         if (result != NO_HIT && monotonic_ms() < target->deadline_ms) {
-            target->ir_result = result;
             break;
         }
     }
 
-    if( target->ir_result == P1_HIT )
-    {
-    
-    }
-    else if( target->ir_result == P2_HIT)
-    {
+    pthread_mutex_lock(&PointMutex);
 
-    }
-    else
+    if( result == P1_HIT )
     {
-        
+        P1_points += target->PointValue;
     }
+    else if( result == P2_HIT)
+    {
+        P2_points += target->PointValue;
+    }
+
+    pthread_mutex_unlock(&PointMutex);
+
+
+
+
 
     return NULL;
 }

@@ -27,6 +27,8 @@ typedef struct _Entity
     IRReceiver* rec;
     LED* led;
 
+    uint64_t PointValue;
+
     pthread_t ir_thread;
     bool ir_thread_started;
     uint64_t deadline_ms;
