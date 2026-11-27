@@ -44,4 +44,6 @@ int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points 
 void DeactivateTarget(TargetEntity* target);
 void flash_seq( TargetEntity* target , RGB colour1 , RGB colour2);
 
+static void *target_ir_worker(void *arg);
+
 #endif
