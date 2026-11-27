@@ -2,6 +2,7 @@
 #include "IR_receiver.h"
 #include "time.h"
 #include <gpiod.h>
+#include <inttypes.h>
 
 #define MS_IN_NS 1000000
 
@@ -47,7 +48,6 @@ int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStam
 
 
     
-    
     int ready = gpiod_line_request_wait_edge_events(
         rec->gpio.request, 100 * MS_IN_NS);
 
@@ -87,6 +87,14 @@ int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStam
         uint64_t stamp_ns = gpiod_edge_event_get_timestamp_ns(event);
 
         uint64_t  edge_time_diff = stamp_ns - rec->prev_stamp_ns;
+
+        fprintf(stderr, "offset=%u %s state=%u delta=%" PRIu64 " us %s\n",
+        rec->offset,
+        type == GPIOD_EDGE_EVENT_FALLING_EDGE ? "FALL" : "RISE",
+        (unsigned)rec->state,
+        rec->prev_stamp_ns ? (uint64_t)(edge_time_diff / 1000) : UINT64_C(0),
+        stamp_ns < ActivatedStamp ? "BEFORE" :
+        stamp_ns >= DealineStamp ? "AFTER" : "IN");
 
         //check to make sure edged happened after Activation of the Target
 

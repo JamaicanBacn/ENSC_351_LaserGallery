@@ -79,24 +79,23 @@ void Game6();
 int main()
 {
  //make an array of the offsets for the rotary encoder
-    uint32_t offsets[RINGS] = { gpiochip2_offsets.GPIO_14_OFFSET,
+    uint32_t offsets[RINGS] = { gpiochip2_offsets.GPIO_18_OFFSET,
                                 gpiochip2_offsets.GPIO_15_OFFSET,
-                                gpiochip2_offsets.GPIO_18_OFFSET,
+                                gpiochip2_offsets.GPIO_14_OFFSET,
                                 gpiochip2_offsets.GPIO_17_OFFSET,
                                 gpiochip2_offsets.GPIO_12_OFFSET };
 
     //Init the gpiochup structure
 
 
-    GameSetup(offsets );
+    GameSetup(offsets);
 
-    printf("here");
-
-    ActivateTarget( &Targets[0] , 5000 , 50);
+    
+    ActivateTarget( &Targets[2] , 5000 , 50);
 
     sleepForMs(10000);
 
-    ActivateTarget( &Targets[3] , 3000 , 10);
+    ActivateTarget( &Targets[4] , 3000 , 10);
 
     sleepForMs(5000);
 
@@ -104,6 +103,8 @@ int main()
 
 
     printf("FINAL SCORES: Player1 -> %" PRIu64 ", Player2 -> %" PRIu64 "\n", P1_points, P2_points);
+    
+  
 }
 
 void CompleteGameClean()
