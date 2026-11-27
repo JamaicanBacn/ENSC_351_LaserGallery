@@ -87,11 +87,10 @@ int main()
 
     //Init the gpiochup structure
 
-    
 
     GameSetup(offsets );
 
-    /*
+    printf("here");
 
     ActivateTarget( &Targets[0] , 5000 , 50);
 
@@ -103,9 +102,6 @@ int main()
 
     CompleteGameClean();    
 
-    */
-
-    
 
     printf("FINAL SCORES: Player1 -> %" PRIu64 ", Player2 -> %" PRIu64 "\n", P1_points, P2_points);
 }
@@ -144,7 +140,6 @@ void CollectWorkerThreads()
 void GameSetup( uint32_t* offsets)
 {
 
-
     audio_init();
     led_init();
     AudioMixer_queueSound(&sounds[AUDIO_GAME_MUSIC]);
@@ -168,17 +163,4 @@ void GameSetup( uint32_t* offsets)
     EntityInit(&Targets[4] , &receivers[4] , &LED_RINGS[4] , &sounds[AUDIO_POT_BREAK] , &sounds[AUDIO_POT_SPAWN]);
 
 
-    set_led(0, RED);
-    set_led(1, GREEN);
-    set_led(2, BLUE);
-    set_led(3, PURPLE);
-    set_led(4, YELLOW);
-    sleepForMs(100000);
-
-    if( pthread_create( &LedID , NULL , ledWorker , NULL ) != 0)
-    {
-        //pthread failed
-        exit(1);
-    }
-    
 }

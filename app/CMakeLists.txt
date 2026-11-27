@@ -10,15 +10,7 @@ add_custom_command(TARGET ENSC351_GALLERY POST_BUILD
     COMMAND "${CMAKE_COMMAND}" -E copy
         "$<TARGET_FILE:ENSC351_GALLERY>"
         "$ENV{HOME}/public/"
-  
-
-
-    COMMENT "Copying exec to public")
-
-
-add_custom_target(deploy_audio ALL
     COMMAND "${CMAKE_COMMAND}" -E copy_directory
-            "${CMAKE_SOURCE_DIR}/wave-files"
-            "$ENV{HOME}/public/wave-files"
-    VERBATIM
-)
+        "${CMAKE_SOURCE_DIR}/wave-files"
+        "~/public/wave-files" 
+    COMMENT "Copying exec to public")

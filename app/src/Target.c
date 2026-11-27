@@ -103,18 +103,7 @@ int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points 
 
 }
 
-void *ledWorker( void* args )
-{
-    (void)args;
 
-    while( !stop )
-    {
-        update_leds();
-        sleepForMs(200);
-    }
-
-    return NULL;
-}
 
 static void *target_ir_worker(void *arg)
 {
@@ -181,9 +170,9 @@ void flash_seq( TargetEntity* target , RGB colour1 , RGB colour2)
     for( int i = 0; i < 5; i++)
     {
         set_led( target->TargetNumber ,  colour1);
-        sleepForMs(1000);
+        sleepForMs(100);
         set_led(target->TargetNumber , colour2);
-        sleepForMs(1000);
+        sleepForMs(100);
         
     }
 
@@ -192,8 +181,6 @@ void flash_seq( TargetEntity* target , RGB colour1 , RGB colour2)
 
 void END()
 {
-    stop = true;
-    pthread_join(LedID , NULL);
     led_close();
 
 }

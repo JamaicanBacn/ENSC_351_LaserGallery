@@ -1,7 +1,10 @@
 
 #include "LED_RINGS.h"
 
+#include <stdbool.h>
+
 static int SPI_FD = -1;
+
 
 pthread_mutex_t led_lock = PTHREAD_MUTEX_INITIALIZER;
 
@@ -55,6 +58,7 @@ void set_led( int ring , RGB rgb )
     // before changing the color make thread safe
     pthread_mutex_lock(&led_lock);
     LED_RINGS[ring].rgb = rgb;
+    update_leds();
     pthread_mutex_unlock(&led_lock);
 
 }
