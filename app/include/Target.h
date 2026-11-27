@@ -29,7 +29,6 @@ typedef struct _Entity
 
     uint64_t PointValue;
 
-    pthread_t IR_thread;
     uint64_t deadline_ns;
     int ir_result;
 

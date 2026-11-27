@@ -14,9 +14,6 @@ uint64_t P2_points = 0;
 atomic_bool stop = false;
 
 
-static void *target_ir_worker(void *arg);
-
-
 void EntityInit( TargetEntity* target , IRReceiver* rec , LED* led_addr , wavedata_t* hit_sound , wavedata_t* activate_sound)
 {
     target->rec = rec;
@@ -29,8 +26,6 @@ void EntityInit( TargetEntity* target , IRReceiver* rec , LED* led_addr , waveda
     target->active = 0;
 
     target->PointValue = 10;
-
-    target->IR_thread = 0;
 
     set_led(target->TargetNumber , BLUE);
 }
@@ -55,29 +50,21 @@ static uint64_t monotonic_ns(void)
          + (uint64_t)now.tv_nsec;
 }
 
-int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points )
+int ActivateTarget(TargetEntity *target, uint64_t duration_ms, uint8_t points)
 {
-    //reset the state
+    target->ir_result = NO_HIT;
+    if (ir_receiver_prepare(target->rec) < 0) {
+        target->ir_result = -1;
+        return -1;
+    }
 
     target->PointValue = points;
+    target->active = true;
     target->Actived_timestamp = monotonic_ns();
-    target->deadline_ns = target->Actived_timestamp + duration_ms * 1000000;
+    set_led(target->TargetNumber, RED);
+    target->deadline_ns = monotonic_ns() + duration_ms * UINT64_C(1000000);
 
-    pthread_create( &target->IR_thread , NULL , target_ir_worker , target);
-    pthread_join( target->IR_thread , NULL);
-
-}
-
-
-
-static void *target_ir_worker(void *arg)
-{
-
-    TargetEntity *target = arg;
     int accepted = NO_HIT;
-
-    set_led(target->TargetNumber , RED);
-
     AudioMixer_queueSound(target->ActivateSound);
 
     while (monotonic_ns() < target->deadline_ns) 
@@ -120,7 +107,7 @@ static void *target_ir_worker(void *arg)
     }
 
     DeactivateTarget(target);
-    return NULL;
+    return accepted < 0 ? -1 : 0;
 }
 
  void DeactivateTarget(TargetEntity* target)
@@ -128,8 +115,6 @@ static void *target_ir_worker(void *arg)
     set_led(target->TargetNumber, BLUE);
     target->active = false;
  }
-
-// Call from main after starting all the targets you want active.
 
 void flash_seq( TargetEntity* target , RGB colour1 , RGB colour2)
 {

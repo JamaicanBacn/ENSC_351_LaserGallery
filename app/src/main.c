@@ -53,19 +53,6 @@ const GPIOCHIP2_OFFSETS gpiochip2_offsets = {
 
 TargetEntity Targets[RINGS];
 
-static void sleepForMs(long long delayInMs)
-{
-    const long long NS_PER_MS = 1000 * 1000;
-    const long long NS_PER_SECOND = 1000000000;
-    long long delayNs = delayInMs * NS_PER_MS;
-    int seconds = delayNs / NS_PER_SECOND;
-    int nanoseconds = delayNs % NS_PER_SECOND;
-    struct timespec reqDelay = {seconds, nanoseconds};
-    nanosleep(&reqDelay, (struct timespec *) NULL);
-}
-
-void CollectWorkerThreads();
-
 void CompleteGameClean();
 
 void GameSetup(uint32_t* offsets);
@@ -91,20 +78,21 @@ int main()
     GameSetup(offsets);
 
     
-    ActivateTarget( &Targets[0] , 5000 , 50);
-
-    sleepForMs(10000);
-
-    ActivateTarget( &Targets[4] , 3000 , 10);
-
-    sleepForMs(5000);
+    int status = EXIT_SUCCESS;
+    if (ActivateTarget(&Targets[0], 5000, 50) < 0) {
+        fprintf(stderr, "Could not read IR from target 1\n");
+        status = EXIT_FAILURE;
+    }
+    if (ActivateTarget(&Targets[4], 3000, 10) < 0) {
+        fprintf(stderr, "Could not read IR from target 5\n");
+        status = EXIT_FAILURE;
+    }
 
     CompleteGameClean();    
 
 
     printf("FINAL SCORES: Player1 -> %" PRIu64 ", Player2 -> %" PRIu64 "\n", P1_points, P2_points);
-    
-  
+    return status;
 }
 
 void CompleteGameClean()

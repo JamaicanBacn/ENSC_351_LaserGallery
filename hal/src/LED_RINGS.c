@@ -53,17 +53,9 @@ void led_init()
     }
 }
 
-void set_led( int ring , RGB rgb )
+// The caller holds led_lock through the complete SPI transfer.
+static void write_led_frame(void)
 {
-    // before changing the color make thread safe
-    LED_RINGS[ring].rgb = rgb;
-    update_leds();
-
-}
-
-void update_leds()
-{
-
     uint8_t *pixel = frame + RESET_BYTES;
     
 
@@ -89,6 +81,25 @@ void update_leds()
         exit(1);
     }
 
+}
+
+void set_led(int ring, RGB rgb)
+{
+    if (ring < 0 || ring >= RINGS) {
+        return;
+    }
+
+    pthread_mutex_lock(&led_lock);
+    LED_RINGS[ring].rgb = rgb;
+    write_led_frame();
+    pthread_mutex_unlock(&led_lock);
+}
+
+void update_leds()
+{
+    pthread_mutex_lock(&led_lock);
+    write_led_frame();
+    pthread_mutex_unlock(&led_lock);
 }
 
 void led_close()
