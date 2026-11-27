@@ -88,15 +88,14 @@ int main()
     //Init the gpiochup structure
 
 
-    GameSetup(offsets );
+    GameSetup(offsets);
 
-    printf("here");
-
+    
     ActivateTarget( &Targets[0] , 5000 , 50);
 
     sleepForMs(10000);
 
-    ActivateTarget( &Targets[3] , 3000 , 10);
+    ActivateTarget( &Targets[4] , 3000 , 10);
 
     sleepForMs(5000);
 
@@ -104,11 +103,12 @@ int main()
 
 
     printf("FINAL SCORES: Player1 -> %" PRIu64 ", Player2 -> %" PRIu64 "\n", P1_points, P2_points);
+    
+  
 }
 
 void CompleteGameClean()
 {
-    CollectWorkerThreads();
     audio_cleanup();
 
     for (int i = 0; i < RINGS; i++) 
@@ -125,17 +125,6 @@ void CompleteGameClean()
     END();
 }
 
-void CollectWorkerThreads()
-{
-
-    // wait for each worker thread that is running to end before the program ends
-
-    for (int i = 0; i < RINGS; i++) {
-        while (atomic_load(&Targets[i].worker_running)) {
-            sleepForMs(10);
-        }
-    }
-}
 
 void GameSetup( uint32_t* offsets)
 {

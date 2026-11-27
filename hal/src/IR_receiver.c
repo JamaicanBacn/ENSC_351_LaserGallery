@@ -1,5 +1,6 @@
 #include "IR_receiver.h"
 #include <gpiod.h>
+#include <inttypes.h>
 
 #define MS_IN_NS 1000000
 
