@@ -92,8 +92,10 @@ int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points 
 
 }
 
-void *ledWorker()
+void *ledWorker( void* args )
 {
+    (void)args;
+
     while( !stop )
     {
         update_leds();

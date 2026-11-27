@@ -46,6 +46,8 @@ int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points 
 void DeactivateTarget(TargetEntity* target);
 void flash_seq( TargetEntity* target , RGB colour1 , RGB colour2);
 
-void *ledWorker();
+void *ledWorker(void* args);
+
+void END(void);
 
 #endif

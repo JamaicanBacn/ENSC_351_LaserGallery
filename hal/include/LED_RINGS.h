@@ -13,8 +13,6 @@
 #include <sys/ioctl.h>
 
 
-
-#define RING_COUNT 1
 #define RGB_SIZE 3
 
 

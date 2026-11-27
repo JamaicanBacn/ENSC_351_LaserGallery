@@ -3,6 +3,7 @@
 #include "LED_RINGS.h"
 #include "IR_receiver.h"
 #include "audioMixer.h"
+#include "Target.h"
 #include "audio.h"
 
 #include <stdio.h>
@@ -49,6 +50,8 @@ const GPIOCHIP2_OFFSETS gpiochip2_offsets = {
     .GPIO_21_OFFSET = 9
 };
 
+IRReceiver receivers[RINGS];
+TargetEntity Targets[RINGS];
 
 int main()
 {
@@ -64,32 +67,19 @@ int main()
     AudioMixer_queueSound(&sounds[AUDIO_GAME_MUSIC]);
     
 
-    /*
+    //Init all of the receivers
+
     for( int i = 0; i < RINGS ; i++)
     {
         ir_receiver_init( &receivers[i] , GPIOCHIP_2_PATH , offsets[i]);
     }
-    */
-    
-    IRReceiver receiver;
-    IRReceiver* rec_ptr = &receiver;
 
-    ir_receiver_init(rec_ptr , GPIO_PATH , offsets[0]);
+    EntityInit(&Targets[0] , &receivers[0] , &LED_RINGS[0] , &sounds[AUDIO_MUMMY_HIT]);
+    EntityInit();
+    EntityInit();
+    EntityInit();
+    EntityInit();
 
-    while(1)
-    {
-        enum PLAYER_HITS hit = read_IR_REC(rec_ptr);
 
-        if( hit == P1_HIT)
-        {
-            AudioMixer_queueSound(&sounds[AUDIO_MUMMY_HIT]);
-            printf("PLAYER1 HIT\n");
-        }
-        else if( hit == P2_HIT)
-        {
-            AudioMixer_queueSound(&sounds[AUDIO_JAR_HIT]);
-            printf("PLAYER2 HIT\n");
-        }
-    }
-    
+    audio_cleanup();
 }
