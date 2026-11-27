@@ -90,7 +90,7 @@ int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStam
 
         //check to make sure edged happened after Activation of the Target
 
-        if( stamp_ns < ActivatedStamp || DealineStamp < stamp_ns)
+        if( stamp_ns < ActivatedStamp || stamp_ns >= DealineStamp)
         {
             continue;
         }
@@ -160,19 +160,20 @@ int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStam
                     ++rec->bits_received;
 
                     if (rec->bits_received == ID_LENGTH) {
-                        if (rec->playerID == PLAYER1_CODE) {
+
+                        uint8_t playerID = rec->playerID;
+                        resetReceiver(rec);
+                        
+                        if (playerID == PLAYER1_CODE)
+                        {
                             hits = P1_HIT;
                         }
-                        else if( rec->playerID == PLAYER2_CODE)
+
+                        if( playerID == PLAYER2_CODE)
                         {
                             hits = P2_HIT;
                         }
 
-                        // Every completed packet resets the decoder.
-                        rec->state = IDLE_STATE;
-                        rec->playerID = 0;
-                        rec->bits_received = 0;
-                        rec->prev_stamp_ns = 0;
                     } else {
                         rec->prev_stamp_ns = stamp_ns;
                         rec->state = WAIT_BIT_FALLING;

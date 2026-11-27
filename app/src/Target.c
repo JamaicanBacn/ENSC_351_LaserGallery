@@ -53,18 +53,29 @@ static uint64_t monotonic_ms(void)
     return (uint64_t)now.tv_sec * 1000 + now.tv_nsec / 1000000;
 }
 
+static uint64_t monotonic_ns(void)
+{
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+
+    return (uint64_t)now.tv_sec * UINT64_C(1000000000)
+         + (uint64_t)now.tv_nsec;
+}
+
 int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points )
 {
     //reset the state
 
-    resetReceiver( target->rec ); // Make sure no information from last check comes through again
-
-    target->Actived_timestamp = monotonic_ms(); // Time that the target was activated
-    target->deadline_ms = target->Actived_timestamp + duration_ms * UINT64_C(1000000); // The deadline for a valid shot
-    
-    if (atomic_exchange(&target->worker_running, true)) {
+    if (atomic_exchange(&target->worker_running, true))
+    {
         return EBUSY;
     }
+
+    resetReceiver( target->rec ); // Make sure no information from last check comes through again
+
+    target->Actived_timestamp = monotonic_ns(); // Time that the target was activated
+    target->deadline_ms = target->Actived_timestamp + duration_ms * UINT64_C(1000000); // The deadline for a valid shot
+    
 
     pthread_attr_t attr;
     int err = pthread_attr_init(&attr);
