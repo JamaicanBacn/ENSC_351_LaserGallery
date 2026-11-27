@@ -79,9 +79,9 @@ void Game6();
 int main()
 {
  //make an array of the offsets for the rotary encoder
-    uint32_t offsets[RINGS] = { gpiochip2_offsets.GPIO_18_OFFSET,
+    uint32_t offsets[RINGS] = { gpiochip2_offsets.GPIO_14_OFFSET,
                                 gpiochip2_offsets.GPIO_15_OFFSET,
-                                gpiochip2_offsets.GPIO_14_OFFSET,
+                                gpiochip2_offsets.GPIO_18_OFFSET,
                                 gpiochip2_offsets.GPIO_17_OFFSET,
                                 gpiochip2_offsets.GPIO_12_OFFSET };
 

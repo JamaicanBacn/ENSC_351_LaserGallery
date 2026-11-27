@@ -63,20 +63,8 @@ int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points 
     target->Actived_timestamp = monotonic_ns();
     target->deadline_ns = target->Actived_timestamp + duration_ms * 1000000;
 
-    while(1)
-    {
-
-    
-        enum PLAYER_HITS output = read_IR_REC(target->rec , target->Actived_timestamp , target->deadline_ns);
-        
-        if( output != NO_HIT)
-        {
-            printf(" HIT HIT HIT HIT\n");
-            return output;
-        }
-        
-    }
-
+    pthread_create( &target->IR_thread , NULL , target_ir_worker , target);
+    pthread_join( target->IR_thread , NULL);
 
 }
 
@@ -87,6 +75,8 @@ static void *target_ir_worker(void *arg)
 
     TargetEntity *target = arg;
     int accepted = NO_HIT;
+
+    set_led(target->TargetNumber , RED);
 
     AudioMixer_queueSound(target->ActivateSound);
 
