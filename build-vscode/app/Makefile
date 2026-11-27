@@ -130,6 +130,20 @@ ENSC351_GALLERY/fast:
 	cd /home/maximus/repositories/ENSC_351_LaserGallery/build-vscode && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/build
 .PHONY : ENSC351_GALLERY/fast
 
+# Convenience name for target.
+app/CMakeFiles/deploy_audio.dir/rule:
+	cd /home/maximus/repositories/ENSC_351_LaserGallery/build-vscode && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 app/CMakeFiles/deploy_audio.dir/rule
+.PHONY : app/CMakeFiles/deploy_audio.dir/rule
+
+# Convenience name for target.
+deploy_audio: app/CMakeFiles/deploy_audio.dir/rule
+.PHONY : deploy_audio
+
+# fast build rule for target.
+deploy_audio/fast:
+	cd /home/maximus/repositories/ENSC_351_LaserGallery/build-vscode && $(MAKE) $(MAKESILENT) -f app/CMakeFiles/deploy_audio.dir/build.make app/CMakeFiles/deploy_audio.dir/build
+.PHONY : deploy_audio/fast
+
 src/Target.o: src/Target.c.o
 .PHONY : src/Target.o
 
@@ -234,6 +248,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... deploy_audio"
 	@echo "... ENSC351_GALLERY"
 	@echo "... src/Target.o"
 	@echo "... src/Target.i"

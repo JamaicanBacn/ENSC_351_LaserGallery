@@ -87,10 +87,12 @@ clean: app/clean
 
 # Recursive "all" directory target.
 app/all: app/CMakeFiles/ENSC351_GALLERY.dir/all
+app/all: app/CMakeFiles/deploy_audio.dir/all
 .PHONY : app/all
 
 # Recursive "codegen" directory target.
 app/codegen: app/CMakeFiles/ENSC351_GALLERY.dir/codegen
+app/codegen: app/CMakeFiles/deploy_audio.dir/codegen
 .PHONY : app/codegen
 
 # Recursive "preinstall" directory target.
@@ -99,6 +101,7 @@ app/preinstall:
 
 # Recursive "clean" directory target.
 app/clean: app/CMakeFiles/ENSC351_GALLERY.dir/clean
+app/clean: app/CMakeFiles/deploy_audio.dir/clean
 .PHONY : app/clean
 
 #=============================================================================
@@ -183,6 +186,38 @@ app/CMakeFiles/ENSC351_GALLERY.dir/codegen:
 app/CMakeFiles/ENSC351_GALLERY.dir/clean:
 	$(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/clean
 .PHONY : app/CMakeFiles/ENSC351_GALLERY.dir/clean
+
+#=============================================================================
+# Target rules for target app/CMakeFiles/deploy_audio.dir
+
+# All Build rule for target.
+app/CMakeFiles/deploy_audio.dir/all:
+	$(MAKE) $(MAKESILENT) -f app/CMakeFiles/deploy_audio.dir/build.make app/CMakeFiles/deploy_audio.dir/depend
+	$(MAKE) $(MAKESILENT) -f app/CMakeFiles/deploy_audio.dir/build.make app/CMakeFiles/deploy_audio.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/maximus/repositories/ENSC_351_LaserGallery/build-vscode/CMakeFiles --progress-num= "Built target deploy_audio"
+.PHONY : app/CMakeFiles/deploy_audio.dir/all
+
+# Build rule for subdir invocation for target.
+app/CMakeFiles/deploy_audio.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/maximus/repositories/ENSC_351_LaserGallery/build-vscode/CMakeFiles 0
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 app/CMakeFiles/deploy_audio.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/maximus/repositories/ENSC_351_LaserGallery/build-vscode/CMakeFiles 0
+.PHONY : app/CMakeFiles/deploy_audio.dir/rule
+
+# Convenience name for target.
+deploy_audio: app/CMakeFiles/deploy_audio.dir/rule
+.PHONY : deploy_audio
+
+# codegen rule for target.
+app/CMakeFiles/deploy_audio.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f app/CMakeFiles/deploy_audio.dir/build.make app/CMakeFiles/deploy_audio.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/maximus/repositories/ENSC_351_LaserGallery/build-vscode/CMakeFiles --progress-num= "Finished codegen for target deploy_audio"
+.PHONY : app/CMakeFiles/deploy_audio.dir/codegen
+
+# clean rule for target.
+app/CMakeFiles/deploy_audio.dir/clean:
+	$(MAKE) $(MAKESILENT) -f app/CMakeFiles/deploy_audio.dir/build.make app/CMakeFiles/deploy_audio.dir/clean
+.PHONY : app/CMakeFiles/deploy_audio.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

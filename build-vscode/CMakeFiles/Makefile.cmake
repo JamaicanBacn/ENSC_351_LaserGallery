@@ -56,4 +56,5 @@ set(CMAKE_MAKEFILE_PRODUCTS
 set(CMAKE_DEPEND_INFO_FILES
   "hal/CMakeFiles/hal.dir/DependInfo.cmake"
   "app/CMakeFiles/ENSC351_GALLERY.dir/DependInfo.cmake"
+  "app/CMakeFiles/deploy_audio.dir/DependInfo.cmake"
   )

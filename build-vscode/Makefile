@@ -142,6 +142,19 @@ ENSC351_GALLERY/fast:
 	$(MAKE) $(MAKESILENT) -f app/CMakeFiles/ENSC351_GALLERY.dir/build.make app/CMakeFiles/ENSC351_GALLERY.dir/build
 .PHONY : ENSC351_GALLERY/fast
 
+#=============================================================================
+# Target rules for targets named deploy_audio
+
+# Build rule for target.
+deploy_audio: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 deploy_audio
+.PHONY : deploy_audio
+
+# fast build rule for target.
+deploy_audio/fast:
+	$(MAKE) $(MAKESILENT) -f app/CMakeFiles/deploy_audio.dir/build.make app/CMakeFiles/deploy_audio.dir/build
+.PHONY : deploy_audio/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -150,6 +163,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... deploy_audio"
 	@echo "... ENSC351_GALLERY"
 	@echo "... hal"
 .PHONY : help

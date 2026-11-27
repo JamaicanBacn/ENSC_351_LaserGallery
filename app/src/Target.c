@@ -110,7 +110,7 @@ void *ledWorker( void* args )
     while( !stop )
     {
         update_leds();
-        sleepForMs(20);
+        sleepForMs(200);
     }
 
     return NULL;
@@ -157,9 +157,9 @@ static void *target_ir_worker(void *arg)
         pthread_mutex_unlock(&PointMutex);
 
         if (accepted == P1_HIT) {
-            flash_seq(target, BLUE, GREEN);
+           // flash_seq(target, BLUE, GREEN);
         } else {
-            flash_seq(target, YELLOW, WHITE);
+            //flash_seq(target, YELLOW, WHITE);
         }
     }
 
@@ -181,9 +181,9 @@ void flash_seq( TargetEntity* target , RGB colour1 , RGB colour2)
     for( int i = 0; i < 5; i++)
     {
         set_led( target->TargetNumber ,  colour1);
-        sleepForMs(100);
+        sleepForMs(1000);
         set_led(target->TargetNumber , colour2);
-        sleepForMs(100);
+        sleepForMs(1000);
         
     }
 

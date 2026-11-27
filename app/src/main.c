@@ -79,25 +79,33 @@ void Game6();
 int main()
 {
  //make an array of the offsets for the rotary encoder
-    uint32_t offsets[RINGS] = { gpiochip2_offsets.GPIO_18_OFFSET,
+    uint32_t offsets[RINGS] = { gpiochip2_offsets.GPIO_14_OFFSET,
                                 gpiochip2_offsets.GPIO_15_OFFSET,
-                                gpiochip2_offsets.GPIO_14_OFFSET,
+                                gpiochip2_offsets.GPIO_18_OFFSET,
                                 gpiochip2_offsets.GPIO_17_OFFSET,
                                 gpiochip2_offsets.GPIO_12_OFFSET };
 
     //Init the gpiochup structure
 
+    
+
     GameSetup(offsets );
+
+    /*
 
     ActivateTarget( &Targets[0] , 5000 , 50);
 
     sleepForMs(10000);
 
-    ActivateTarget( &Targets[0] , 3000 , 10);
+    ActivateTarget( &Targets[3] , 3000 , 10);
 
     sleepForMs(5000);
 
     CompleteGameClean();    
+
+    */
+
+    
 
     printf("FINAL SCORES: Player1 -> %" PRIu64 ", Player2 -> %" PRIu64 "\n", P1_points, P2_points);
 }
@@ -135,6 +143,8 @@ void CollectWorkerThreads()
 
 void GameSetup( uint32_t* offsets)
 {
+
+
     audio_init();
     led_init();
     AudioMixer_queueSound(&sounds[AUDIO_GAME_MUSIC]);
@@ -156,6 +166,14 @@ void GameSetup( uint32_t* offsets)
     EntityInit(&Targets[2] , &receivers[2] , &LED_RINGS[2] , &sounds[AUDIO_POT_BREAK] , &sounds[AUDIO_POT_SPAWN]);
     EntityInit(&Targets[3] , &receivers[3] , &LED_RINGS[3] , &sounds[AUDIO_MUMMY_HIT] , &sounds[AUDIO_MUMMY_SPAWN]);
     EntityInit(&Targets[4] , &receivers[4] , &LED_RINGS[4] , &sounds[AUDIO_POT_BREAK] , &sounds[AUDIO_POT_SPAWN]);
+
+
+    set_led(0, RED);
+    set_led(1, GREEN);
+    set_led(2, BLUE);
+    set_led(3, PURPLE);
+    set_led(4, YELLOW);
+    sleepForMs(100000);
 
     if( pthread_create( &LedID , NULL , ledWorker , NULL ) != 0)
     {

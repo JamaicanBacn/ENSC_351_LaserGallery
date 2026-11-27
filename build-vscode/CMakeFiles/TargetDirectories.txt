@@ -4,5 +4,6 @@
 /home/maximus/repositories/ENSC_351_LaserGallery/build-vscode/hal/CMakeFiles/edit_cache.dir
 /home/maximus/repositories/ENSC_351_LaserGallery/build-vscode/hal/CMakeFiles/rebuild_cache.dir
 /home/maximus/repositories/ENSC_351_LaserGallery/build-vscode/app/CMakeFiles/ENSC351_GALLERY.dir
+/home/maximus/repositories/ENSC_351_LaserGallery/build-vscode/app/CMakeFiles/deploy_audio.dir
 /home/maximus/repositories/ENSC_351_LaserGallery/build-vscode/app/CMakeFiles/edit_cache.dir
 /home/maximus/repositories/ENSC_351_LaserGallery/build-vscode/app/CMakeFiles/rebuild_cache.dir
