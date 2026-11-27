@@ -7,6 +7,7 @@
 #include "audio.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <stdint.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
@@ -53,20 +54,7 @@ const GPIOCHIP2_OFFSETS gpiochip2_offsets = {
 
 TargetEntity Targets[RINGS];
 
-static void sleepForMs(long long delayInMs)
-{
-    const long long NS_PER_MS = 1000 * 1000;
-    const long long NS_PER_SECOND = 1000000000;
-    long long delayNs = delayInMs * NS_PER_MS;
-    int seconds = delayNs / NS_PER_SECOND;
-    int nanoseconds = delayNs % NS_PER_SECOND;
-    struct timespec reqDelay = {seconds, nanoseconds};
-    nanosleep(&reqDelay, (struct timespec *) NULL);
-}
-
-void CollectWorkerThreads();
-
-void CompleteGameClean();
+int CompleteGameClean(void);
 
 void GameSetup(uint32_t* offsets);
 
@@ -91,24 +79,36 @@ int main()
     GameSetup(offsets);
 
     
-    ActivateTarget( &Targets[0] , 5000 , 50);
+    int status = EXIT_SUCCESS;
+    int error = ActivateTarget(&Targets[0], 5000, 50);
+    if (error != 0) {
+        fprintf(stderr, "Could not activate target 1: %s\n", strerror(error));
+        status = EXIT_FAILURE;
+    }
+    error = ActivateTarget(&Targets[4], 3000, 10);
+    if (error != 0) {
+        fprintf(stderr, "Could not activate target 5: %s\n", strerror(error));
+        status = EXIT_FAILURE;
+    }
 
-    sleepForMs(10000);
-
-    ActivateTarget( &Targets[4] , 3000 , 10);
-
-    sleepForMs(5000);
-
-    CompleteGameClean();    
-
+    if (CompleteGameClean() != 0) {
+        status = EXIT_FAILURE;
+    }
 
     printf("FINAL SCORES: Player1 -> %" PRIu64 ", Player2 -> %" PRIu64 "\n", P1_points, P2_points);
-    
-  
+    return status;
 }
 
-void CompleteGameClean()
+int CompleteGameClean(void)
 {
+    int status = 0;
+    for (int i = 0; i < RINGS; ++i) {
+        if (WaitForTarget(&Targets[i]) < 0) {
+            fprintf(stderr, "Could not read IR from target %d\n", i + 1);
+            status = -1;
+        }
+    }
+
     audio_cleanup();
 
     for (int i = 0; i < RINGS; i++) 
@@ -123,6 +123,7 @@ void CompleteGameClean()
     }
 
     END();
+    return status;
 }
 
 

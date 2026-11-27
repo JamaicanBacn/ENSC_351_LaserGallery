@@ -3,6 +3,8 @@
 #include <inttypes.h>
 
 #define MS_IN_NS 1000000
+// The default kernel queue holds 16 events for one requested line.
+#define IR_EDGE_BATCH_SIZE 16
 
 IRReceiver receivers[RINGS] = {0};
 
@@ -24,13 +26,28 @@ int ir_receiver_init(IRReceiver *rec, char *chip_path, unsigned int offset)
         return -1;
     }
 
-    rec->events = gpiod_edge_event_buffer_new(16);
+    rec->events = gpiod_edge_event_buffer_new(IR_EDGE_BATCH_SIZE);
     if (rec->events == NULL) {
         perror("gpiod_edge_event_buffer_new");
         gpio_cleanup(&rec->gpio);
         return -1;
     }
 
+    return 0;
+}
+
+int ir_receiver_prepare(IRReceiver *rec)
+{
+    resetReceiver(rec);
+
+    // Discard the inactive target's queued edges before opening its shot window.
+    int ready = gpiod_line_request_wait_edge_events(rec->gpio.request, 0);
+    if (ready < 0 ||
+        (ready > 0 && gpiod_line_request_read_edge_events(
+            rec->gpio.request, rec->events, IR_EDGE_BATCH_SIZE) < 0)) {
+        perror("clear queued IR edges");
+        return -1;
+    }
     return 0;
 }
 
@@ -53,7 +70,7 @@ int read_IR_REC(IRReceiver *rec, uint64_t activated_ns, uint64_t deadline_ns)
     // If there was a GPIO edge event, read the queued events.
     // count is the number of GPIO events read into the buffer.
     int count = gpiod_line_request_read_edge_events(
-        rec->gpio.request, rec->events, 16);
+        rec->gpio.request, rec->events, IR_EDGE_BATCH_SIZE);
 
     if (count < 0) {
         perror("read IR edges");

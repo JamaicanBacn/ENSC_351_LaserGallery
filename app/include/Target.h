@@ -17,8 +17,7 @@ typedef struct _Entity
     bool active; // Is the entity active
     bool hit;   // Has the entity been hit
 
-    // controls the time that it is activated
-    uint64_t Actived_timestamp;
+    uint64_t duration_ms;
 
     //Sounds
     wavedata_t* HitSound;
@@ -29,8 +28,6 @@ typedef struct _Entity
 
     uint64_t PointValue;
 
-    pthread_t IR_thread;
-    uint64_t deadline_ns;
     int ir_result;
 
 } TargetEntity;
@@ -42,7 +39,10 @@ extern atomic_bool stop;
 extern pthread_t LedID;
 
 void EntityInit( TargetEntity* Entity, IRReceiver* rec , LED* led_addr , wavedata_t* hit_sound , wavedata_t* activate_sound);
+// Start a target asynchronously. Returns zero or a pthread error code.
 int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points );
+// Wait for this target to finish and return its IR result.
+int WaitForTarget(TargetEntity *target);
 void DeactivateTarget(TargetEntity* target);
 void flash_seq( TargetEntity* target , RGB colour1 , RGB colour2);
 
