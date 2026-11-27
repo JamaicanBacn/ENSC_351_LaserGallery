@@ -1,7 +1,10 @@
 
 #include "LED_RINGS.h"
 
-#include <stdbool.h>
+#include <string.h>
+
+// Limit the current step when a ring switches from idle blue to white.
+enum { MAX_LED_CHANNEL = 64 };
 
 static int SPI_FD = -1;
 
@@ -57,14 +60,17 @@ void led_init()
 static void write_led_frame(void)
 {
     uint8_t *pixel = frame + RESET_BYTES;
-    
 
     for (int ring = 0; ring < RINGS; ++ring) {
+        RGB color = LED_RINGS[ring].rgb;
+        uint8_t encoded[3 * RGB_SIZE];
+        encode_channel((color.G * MAX_LED_CHANNEL + 127) / 255, encoded);
+        encode_channel((color.R * MAX_LED_CHANNEL + 127) / 255, encoded + RGB_SIZE);
+        encode_channel((color.B * MAX_LED_CHANNEL + 127) / 255, encoded + 2 * RGB_SIZE);
+
         for (int led = 0; led < PIXELS_PER_RING; ++led) {
-            encode_channel(LED_RINGS[ring].rgb.G, pixel);
-            encode_channel(LED_RINGS[ring].rgb.R, pixel + RGB_SIZE);
-            encode_channel(LED_RINGS[ring].rgb.B, pixel + RGB_SIZE * 2);
-            pixel += 9;
+            memcpy(pixel, encoded, sizeof encoded);
+            pixel += sizeof encoded;
         }
     }
 
