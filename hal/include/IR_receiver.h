@@ -3,6 +3,8 @@
 #ifndef IR_REC_H
 #define IR_REC_H
 
+#include <stdbool.h>
+
 #include "gpio.h"
 #include "LED_RINGS.h"
 
@@ -59,7 +61,7 @@ typedef struct {
 extern IRReceiver receivers[RINGS];
 
 int ir_receiver_init( IRReceiver *rec , char* chip_path , unsigned int offset);
-int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStamp);
+int read_IR_REC(IRReceiver *rec, uint64_t activated_ns, uint64_t deadline_ns);
 void resetReceiver(IRReceiver* rec);
 
 #endif
