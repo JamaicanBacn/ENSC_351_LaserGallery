@@ -74,7 +74,7 @@ int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points 
     resetReceiver( target->rec ); // Make sure no information from last check comes through again
 
     target->Actived_timestamp = monotonic_ns(); // Time that the target was activated
-    target->deadline_ms = target->Actived_timestamp + duration_ms * UINT64_C(1000000); // The deadline for a valid shot
+    target->deadline_ns = target->Actived_timestamp + duration_ms * UINT64_C(1000000); // The deadline for a valid shot
     
 
     pthread_attr_t attr;
@@ -96,7 +96,6 @@ int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points 
 
     set_led(target->TargetNumber, RED);
     target->active = true;
-    target->deadline_ms = monotonic_ms() + duration_ms;
 
     pthread_t thread;
     err = pthread_create(&thread, &attr, target_ir_worker, target);
@@ -132,15 +131,14 @@ static void *target_ir_worker(void *arg)
 
     AudioMixer_queueSound(target->ActivateSound);
 
-    while (monotonic_ms() < target->deadline_ms) {
-        int result = read_IR_REC(target->rec , target->Actived_timestamp , target->deadline_ms);
+    while (monotonic_ns() < target->deadline_ns) 
+    {
+        int result = read_IR_REC(target->rec,
+                                target->Actived_timestamp,
+                                target->deadline_ns);
 
         if (result < 0) {
             accepted = -1;
-            break;
-        }
-
-        if (monotonic_ms() >= target->deadline_ms) {
             break;
         }
 
@@ -149,6 +147,7 @@ static void *target_ir_worker(void *arg)
             break;
         }
     }
+    
 
     target->ir_result = accepted;
 

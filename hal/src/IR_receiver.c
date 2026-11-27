@@ -166,12 +166,12 @@ int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStam
                         
                         if (playerID == PLAYER1_CODE)
                         {
-                            hits = P1_HIT;
+                            return P1_HIT;
                         }
 
                         if( playerID == PLAYER2_CODE)
                         {
-                            hits = P2_HIT;
+                            return P2_HIT;
                         }
 
                     } else {

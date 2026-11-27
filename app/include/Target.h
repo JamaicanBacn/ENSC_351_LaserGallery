@@ -30,7 +30,7 @@ typedef struct _Entity
     uint64_t PointValue;
 
     atomic_bool worker_running;
-    uint64_t deadline_ms;
+    uint64_t deadline_ns;
     int ir_result;
 
 } TargetEntity;
