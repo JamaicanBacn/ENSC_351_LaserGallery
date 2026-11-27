@@ -89,43 +89,55 @@ int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points 
 static void *target_ir_worker(void *arg)
 {
     TargetEntity *target = arg;
+    int accepted = NO_HIT;
 
-    set_led(target->TargetNumber , RED);
-
-    int result = NO_HIT;
-    while (monotonic_ms() < target->deadline_ms) { // checks we are in the deadline
-        result = read_IR_REC(target->rec);
+    while (monotonic_ms() < target->deadline_ms) {
+        int result = read_IR_REC(target->rec);
 
         if (result < 0) {
-            target->ir_result = -1;
+            accepted = -1;
             break;
         }
 
-        if (result != NO_HIT && monotonic_ms() < target->deadline_ms) {
+        if (monotonic_ms() >= target->deadline_ms) {
+            break;
+        }
+
+        if (result == P1_HIT || result == P2_HIT) {
+            accepted = result;
             break;
         }
     }
 
-    pthread_mutex_lock(&PointMutex);
+    target->ir_result = accepted;
 
-    if( result == P1_HIT )
-    {
-        P1_points += target->PointValue;
-        flash_seq(target->TargetNumber , BLUE , GREEN );
+    if (accepted == P1_HIT || accepted == P2_HIT) {
+        pthread_mutex_lock(&PointMutex);
+        if (accepted == P1_HIT) {
+            P1_points += target->PointValue;
+        } else {
+            P2_points += target->PointValue;
+        }
+        pthread_mutex_unlock(&PointMutex);
+
+        if (accepted == P1_HIT) {
+            flash_seq(target, BLUE, GREEN);
+        } else {
+            flash_seq(target, YELLOW, WHITE);
+        }
     }
-    else if( result == P2_HIT)
-    {
-        P2_points += target->PointValue;
-        flash_seq(target->TargetNumber , YELLOW, WHITE);
-    }
 
-    pthread_mutex_unlock(&PointMutex);
-
-    DeactivateTarget(target);  // Restore idle colour, flush LEDs, clear active.
+    DeactivateTarget(target);
     atomic_store(&target->worker_running, false);
     return NULL;
 }
 
+ void DeactivateTarget(TargetEntity* target)
+ {
+    set_led(target->TargetNumber, BLUE);
+    update_leds();
+    target->active = false;
+ }
 
 // Call from main after starting all the targets you want active.
 

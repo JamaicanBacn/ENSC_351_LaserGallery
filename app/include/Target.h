@@ -40,8 +40,8 @@ extern uint64_t P1_points;
 extern uint64_t P2_points;
 
 void EntityInit( TargetEntity* Entity, IRReceiver* rec , LED* led_addr , wavedata_t* hit_sound , wavedata_t* activate_sound);
-void ActivateTarget();
-void DeactivateTarget();
-void Closetarget();
+int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points );
+void DeactivateTarget(TargetEntity* target);
+void flash_seq( TargetEntity* target , RGB colour1 , RGB colour2);
 
 #endif
