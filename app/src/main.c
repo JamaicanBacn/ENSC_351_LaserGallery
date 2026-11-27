@@ -53,6 +53,8 @@ const GPIOCHIP2_OFFSETS gpiochip2_offsets = {
 IRReceiver receivers[RINGS];
 TargetEntity Targets[RINGS];
 
+
+
 int main()
 {
  //make an array of the offsets for the rotary encoder
@@ -74,12 +76,15 @@ int main()
         ir_receiver_init( &receivers[i] , GPIOCHIP_2_PATH , offsets[i]);
     }
 
-    EntityInit(&Targets[0] , &receivers[0] , &LED_RINGS[0] , &sounds[AUDIO_MUMMY_HIT]);
-    EntityInit();
-    EntityInit();
-    EntityInit();
-    EntityInit();
+    EntityInit(&Targets[0] , &receivers[0] , &LED_RINGS[0] , &sounds[AUDIO_POT_BREAK] , &sounds[AUDIO_POT_SPAWN]);
+    EntityInit(&Targets[1] , &receivers[1] , &LED_RINGS[1] , &sounds[AUDIO_MUMMY_HIT] , &sounds[AUDIO_MUMMY_SPAWN]);
+    EntityInit(&Targets[2] , &receivers[2] , &LED_RINGS[2] , &sounds[AUDIO_POT_BREAK] , &sounds[AUDIO_POT_SPAWN]);
+    EntityInit(&Targets[1] , &receivers[1] , &LED_RINGS[1] , &sounds[AUDIO_MUMMY_HIT] , &sounds[AUDIO_MUMMY_SPAWN]);
+    EntityInit(&Targets[3] , &receivers[3] , &LED_RINGS[3] , &sounds[AUDIO_POT_BREAK] , &sounds[AUDIO_POT_SPAWN]);
 
+    
 
+    led_close();
     audio_cleanup();
+    gpio_cleanup();
 }
