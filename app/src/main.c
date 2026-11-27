@@ -85,6 +85,8 @@ int main()
         fprintf(stderr, "Could not activate target 1: %s\n", strerror(error));
         status = EXIT_FAILURE;
     }
+    // This game presents one target at a time.
+    WaitForTarget(&Targets[0]);
     error = ActivateTarget(&Targets[4], 3000, 10);
     if (error != 0) {
         fprintf(stderr, "Could not activate target 5: %s\n", strerror(error));

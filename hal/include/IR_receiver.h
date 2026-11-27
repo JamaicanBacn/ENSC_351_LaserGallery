@@ -62,7 +62,9 @@ extern IRReceiver receivers[RINGS];
 
 int ir_receiver_init( IRReceiver *rec , char* chip_path , unsigned int offset);
 int ir_receiver_prepare(IRReceiver *rec);
-int read_IR_REC(IRReceiver *rec, uint64_t activated_ns, uint64_t deadline_ns);
+// On a hit, hit_stamp_ns receives the timestamp of the packet's final edge.
+int read_IR_REC(IRReceiver *rec, uint64_t activated_ns, uint64_t deadline_ns,
+                uint64_t *hit_stamp_ns);
 void resetReceiver(IRReceiver* rec);
 
 #endif

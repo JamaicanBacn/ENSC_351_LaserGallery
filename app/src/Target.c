@@ -8,6 +8,9 @@ pthread_mutex_t PointMutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t target_lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t target_finished = PTHREAD_COND_INITIALIZER;
 
+// Protected by PointMutex. Separate histories preserve simultaneous shots from both players.
+static uint64_t last_hit_ns[PLAYERS][RINGS];
+
 static void *target_ir_worker(void *arg);
 
 pthread_t LedID = 0;
@@ -31,7 +34,7 @@ void EntityInit( TargetEntity* target , IRReceiver* rec , LED* led_addr , waveda
 
     target->PointValue = 10;
 
-    set_led(target->TargetNumber , BLUE);
+    set_led(target->TargetNumber, OFF);
 }
 
 static void sleepForMs(long long delayInMs)
@@ -87,6 +90,33 @@ int ActivateTarget(TargetEntity *target, uint64_t duration_ms, uint8_t points)
     return error;
 }
 
+static bool score_hit(const TargetEntity *target, int player, uint64_t stamp_ns)
+{
+    pthread_mutex_lock(&PointMutex);
+    for (int ring = 0; ring < RINGS; ++ring) {
+        uint64_t previous_ns = last_hit_ns[player][ring];
+        uint64_t gap_ns = stamp_ns >= previous_ns
+            ? stamp_ns - previous_ns
+            : previous_ns - stamp_ns;
+
+        // Two receivers can decode the same packet with slightly different edge timings.
+        // A 1 ms window is shorter than one complete IR packet.
+        if (previous_ns != 0 && gap_ns <= _1MS) {
+            pthread_mutex_unlock(&PointMutex);
+            return false;
+        }
+    }
+
+    last_hit_ns[player][target->TargetNumber] = stamp_ns;
+    if (player == P1_HIT) {
+        P1_points += target->PointValue;
+    } else {
+        P2_points += target->PointValue;
+    }
+    pthread_mutex_unlock(&PointMutex);
+    return true;
+}
+
 static void *target_ir_worker(void *arg)
 {
     TargetEntity *target = arg;
@@ -103,16 +133,16 @@ static void *target_ir_worker(void *arg)
 
     while (monotonic_ns() < deadline_ns)
     {
-        int result = read_IR_REC(target->rec,
-                                activated_ns,
-                                deadline_ns);
+        uint64_t hit_stamp_ns;
+        int result = read_IR_REC(target->rec, activated_ns, deadline_ns, &hit_stamp_ns);
 
         if (result < 0) {
             accepted = -1;
             break;
         }
 
-        if (result == P1_HIT || result == P2_HIT) {
+        if ((result == P1_HIT || result == P2_HIT) &&
+            score_hit(target, result, hit_stamp_ns)) {
             accepted = result;
             break;
         }
@@ -120,16 +150,7 @@ static void *target_ir_worker(void *arg)
     
 
     if (accepted == P1_HIT || accepted == P2_HIT) {
-        pthread_mutex_lock(&PointMutex);
-
         AudioMixer_queueSound(target->HitSound);
-
-        if (accepted == P1_HIT) {
-            P1_points += target->PointValue;
-        } else {
-            P2_points += target->PointValue;
-        }
-        pthread_mutex_unlock(&PointMutex);
 
         if (accepted == P1_HIT) {
            flash_seq(target, BLUE, GREEN);
@@ -161,7 +182,7 @@ int WaitForTarget(TargetEntity *target)
 
  void DeactivateTarget(TargetEntity* target)
  {
-    set_led(target->TargetNumber, BLUE);
+    set_led(target->TargetNumber, OFF);
  }
 
 void flash_seq( TargetEntity* target , RGB colour1 , RGB colour2)
