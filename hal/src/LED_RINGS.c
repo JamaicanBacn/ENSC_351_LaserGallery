@@ -5,7 +5,7 @@ static int SPI_FD = -1;
 
 pthread_mutex_t led_lock = PTHREAD_MUTEX_INITIALIZER;
 
-RGB LED_RINGS[RINGS] = {0};
+LED LED_RINGS[RINGS] = {0};
 uint8_t frame[2 * RESET_BYTES + RINGS * PIXELS_PER_RING * 9] = {0};
 
 void encode_channel(uint8_t value, uint8_t out[3])
@@ -49,7 +49,7 @@ void set_led( int ring , RGB rgb )
 {
     // before changing the color make thread safe
     pthread_mutex_lock(&led_lock);
-    LED_RINGS[ring] = rgb;
+    LED_RINGS[ring].rgb = rgb;
     pthread_mutex_unlock(&led_lock);
 
 }
@@ -63,9 +63,9 @@ void update_leds()
 
     for (int ring = 0; ring < RINGS; ++ring) {
         for (int led = 0; led < PIXELS_PER_RING; ++led) {
-            encode_channel(LED_RINGS[ring].G, pixel);
-            encode_channel(LED_RINGS[ring].R, pixel + RGB_SIZE);
-            encode_channel(LED_RINGS[ring].B, pixel + RGB_SIZE * 2);
+            encode_channel(LED_RINGS[ring].rgb.G, pixel);
+            encode_channel(LED_RINGS[ring].rgb.R, pixel + RGB_SIZE);
+            encode_channel(LED_RINGS[ring].rgb.B, pixel + RGB_SIZE * 2);
             pixel += 9;
         }
     }

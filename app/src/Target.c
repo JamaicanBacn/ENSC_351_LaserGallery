@@ -185,6 +185,6 @@ void END()
     }
 
     stop = true;
-    pthread_join(&LedID , NULL);
+    pthread_join(LedID , NULL);
 
 }
