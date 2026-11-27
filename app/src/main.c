@@ -91,7 +91,7 @@ int main()
     GameSetup(offsets);
 
     
-    ActivateTarget( &Targets[2] , 5000 , 50);
+    ActivateTarget( &Targets[0] , 5000 , 50);
 
     sleepForMs(10000);
 

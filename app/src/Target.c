@@ -59,10 +59,25 @@ int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points 
 {
     //reset the state
 
-    pthread_create( &target->IR_thread , NULL , target_ir_worker , NULL);
-    pthread_join(target->IR_thread , NULL);
+    target->PointValue = points;
+    target->Actived_timestamp = monotonic_ns();
+    target->deadline_ns = target->Actived_timestamp + duration_ms * 1000000;
 
-    return 0;
+    while(1)
+    {
+
+    
+        enum PLAYER_HITS output = read_IR_REC(target->rec , target->Actived_timestamp , target->deadline_ns);
+        
+        if( output != NO_HIT)
+        {
+            printf(" HIT HIT HIT HIT\n");
+            return output;
+        }
+        
+    }
+
+
 }
 
 

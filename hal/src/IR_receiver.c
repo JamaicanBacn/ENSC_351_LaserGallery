@@ -88,20 +88,8 @@ int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStam
 
         uint64_t  edge_time_diff = stamp_ns - rec->prev_stamp_ns;
 
-        fprintf(stderr, "offset=%u %s state=%u delta=%" PRIu64 " us %s\n",
-        rec->offset,
-        type == GPIOD_EDGE_EVENT_FALLING_EDGE ? "FALL" : "RISE",
-        (unsigned)rec->state,
-        rec->prev_stamp_ns ? (uint64_t)(edge_time_diff / 1000) : UINT64_C(0),
-        stamp_ns < ActivatedStamp ? "BEFORE" :
-        stamp_ns >= DealineStamp ? "AFTER" : "IN");
 
         //check to make sure edged happened after Activation of the Target
-
-        if( stamp_ns < ActivatedStamp || stamp_ns >= DealineStamp)
-        {
-            continue;
-        }
 
         switch ( rec->state )
         {
@@ -204,7 +192,7 @@ int read_IR_REC(IRReceiver *rec , uint64_t ActivatedStamp , uint64_t DealineStam
         }  // End of switch.
     }      // End of the event for loop.
 
-    return hits;
+    return NO_HIT;
 }
 
 void resetReceiver(IRReceiver* rec)
