@@ -86,6 +86,14 @@ int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points 
 
 }
 
+static void *ledWorker()
+{
+    while(1)
+    {
+        update_leds();
+    }
+}
+
 static void *target_ir_worker(void *arg)
 {
     TargetEntity *target = arg;

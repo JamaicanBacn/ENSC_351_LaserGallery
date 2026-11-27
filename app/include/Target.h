@@ -45,5 +45,6 @@ void DeactivateTarget(TargetEntity* target);
 void flash_seq( TargetEntity* target , RGB colour1 , RGB colour2);
 
 static void *target_ir_worker(void *arg);
+static void *ledWorker();
 
 #endif
