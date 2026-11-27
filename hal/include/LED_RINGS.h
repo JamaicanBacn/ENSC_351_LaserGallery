@@ -50,11 +50,12 @@ typedef struct
 
 } LED;
 
+extern pthread_mutex_t led_lock;
 extern RGB LED_RINGS[RINGS];
 extern uint8_t frame[2 * RESET_BYTES + RINGS * PIXELS_PER_RING * 9];
 
 void led_init();
-void set_led( uint8_t ring , RGB colour );
+void set_led( LED led);
 void update_leds();
 void led_close();
 

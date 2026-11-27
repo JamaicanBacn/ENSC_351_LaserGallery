@@ -1,3 +1,7 @@
 {
-    "cmake.sourceDirectory": "/home/maximus/repositories/ENSC_351_LaserGallery/Led_Tester"
+
+    "cmake.sourceDirectory": "${workspaceFolder}",
+    "cmake.buildDirectory": "${workspaceFolder}/build-vscode",
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/build-vscode/compile_commands.json"
+
 }

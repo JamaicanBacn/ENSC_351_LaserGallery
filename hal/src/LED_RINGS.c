@@ -3,6 +3,8 @@
 
 static int SPI_FD = -1;
 
+pthread_mutex_t led_lock;
+
 RGB LED_RINGS[RINGS] = {0};
 uint8_t frame[2 * RESET_BYTES + RINGS * PIXELS_PER_RING * 9] = {0};
 
@@ -43,10 +45,12 @@ void led_init()
     }
 }
 
-void set_led( uint8_t ring , RGB colour )
+void set_led( LED led )
 {
-    
-    LED_RINGS[ring] = colour;
+    // before changing the color make thread safe
+    pthread_mutex_lock(&led_lock);
+    LED_RINGS[led.RING_NUMBER] = led.rgb;
+    pthread_mutex_unlock(&led_lock);
 
 }
 
@@ -54,6 +58,8 @@ void update_leds()
 {
 
     uint8_t *pixel = frame + RESET_BYTES;
+    
+    pthread_mutex_lock(&led_lock);
 
     for (int ring = 0; ring < RINGS; ++ring) {
         for (int led = 0; led < PIXELS_PER_RING; ++led) {
@@ -65,6 +71,8 @@ void update_leds()
     }
 
     ssize_t written = write(SPI_FD, frame, sizeof(frame));
+
+    pthread_mutex_unlock(&led_lock);
 
     if (written < 0) {
         perror("write SPI frame");

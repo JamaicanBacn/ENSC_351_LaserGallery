@@ -1,0 +1,44 @@
+[
+{
+  "directory": "/home/maximus/repositories/ENSC_351_LaserGallery/build-vscode/hal",
+  "command": "aarch64-linux-gnu-gcc  -I/home/maximus/repositories/ENSC_351_LaserGallery/hal/include -g -std=gnu11 -Wall -Wpedantic -Wextra -fdiagnostics-color -fsanitize=address -pthread -o CMakeFiles/hal.dir/src/IR_receiver.c.o -c /home/maximus/repositories/ENSC_351_LaserGallery/hal/src/IR_receiver.c",
+  "file": "/home/maximus/repositories/ENSC_351_LaserGallery/hal/src/IR_receiver.c",
+  "output": "hal/CMakeFiles/hal.dir/src/IR_receiver.c.o"
+},
+{
+  "directory": "/home/maximus/repositories/ENSC_351_LaserGallery/build-vscode/hal",
+  "command": "aarch64-linux-gnu-gcc  -I/home/maximus/repositories/ENSC_351_LaserGallery/hal/include -g -std=gnu11 -Wall -Wpedantic -Wextra -fdiagnostics-color -fsanitize=address -pthread -o CMakeFiles/hal.dir/src/LED_RINGS.c.o -c /home/maximus/repositories/ENSC_351_LaserGallery/hal/src/LED_RINGS.c",
+  "file": "/home/maximus/repositories/ENSC_351_LaserGallery/hal/src/LED_RINGS.c",
+  "output": "hal/CMakeFiles/hal.dir/src/LED_RINGS.c.o"
+},
+{
+  "directory": "/home/maximus/repositories/ENSC_351_LaserGallery/build-vscode/hal",
+  "command": "aarch64-linux-gnu-gcc  -I/home/maximus/repositories/ENSC_351_LaserGallery/hal/include -g -std=gnu11 -Wall -Wpedantic -Wextra -fdiagnostics-color -fsanitize=address -pthread -o CMakeFiles/hal.dir/src/gpio.c.o -c /home/maximus/repositories/ENSC_351_LaserGallery/hal/src/gpio.c",
+  "file": "/home/maximus/repositories/ENSC_351_LaserGallery/hal/src/gpio.c",
+  "output": "hal/CMakeFiles/hal.dir/src/gpio.c.o"
+},
+{
+  "directory": "/home/maximus/repositories/ENSC_351_LaserGallery/build-vscode/app",
+  "command": "aarch64-linux-gnu-gcc  -I/home/maximus/repositories/ENSC_351_LaserGallery/app/include -I/home/maximus/repositories/ENSC_351_LaserGallery/hal/include -g -std=gnu11 -Wall -Wpedantic -Wextra -fdiagnostics-color -fsanitize=address -pthread -o CMakeFiles/ENSC351_GALLERY.dir/src/Target.c.o -c /home/maximus/repositories/ENSC_351_LaserGallery/app/src/Target.c",
+  "file": "/home/maximus/repositories/ENSC_351_LaserGallery/app/src/Target.c",
+  "output": "app/CMakeFiles/ENSC351_GALLERY.dir/src/Target.c.o"
+},
+{
+  "directory": "/home/maximus/repositories/ENSC_351_LaserGallery/build-vscode/app",
+  "command": "aarch64-linux-gnu-gcc  -I/home/maximus/repositories/ENSC_351_LaserGallery/app/include -I/home/maximus/repositories/ENSC_351_LaserGallery/hal/include -g -std=gnu11 -Wall -Wpedantic -Wextra -fdiagnostics-color -fsanitize=address -pthread -o CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.o -c /home/maximus/repositories/ENSC_351_LaserGallery/app/src/audio.c",
+  "file": "/home/maximus/repositories/ENSC_351_LaserGallery/app/src/audio.c",
+  "output": "app/CMakeFiles/ENSC351_GALLERY.dir/src/audio.c.o"
+},
+{
+  "directory": "/home/maximus/repositories/ENSC_351_LaserGallery/build-vscode/app",
+  "command": "aarch64-linux-gnu-gcc  -I/home/maximus/repositories/ENSC_351_LaserGallery/app/include -I/home/maximus/repositories/ENSC_351_LaserGallery/hal/include -g -std=gnu11 -Wall -Wpedantic -Wextra -fdiagnostics-color -fsanitize=address -pthread -o CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.o -c /home/maximus/repositories/ENSC_351_LaserGallery/app/src/audioMixer.c",
+  "file": "/home/maximus/repositories/ENSC_351_LaserGallery/app/src/audioMixer.c",
+  "output": "app/CMakeFiles/ENSC351_GALLERY.dir/src/audioMixer.c.o"
+},
+{
+  "directory": "/home/maximus/repositories/ENSC_351_LaserGallery/build-vscode/app",
+  "command": "aarch64-linux-gnu-gcc  -I/home/maximus/repositories/ENSC_351_LaserGallery/app/include -I/home/maximus/repositories/ENSC_351_LaserGallery/hal/include -g -std=gnu11 -Wall -Wpedantic -Wextra -fdiagnostics-color -fsanitize=address -pthread -o CMakeFiles/ENSC351_GALLERY.dir/src/main.c.o -c /home/maximus/repositories/ENSC_351_LaserGallery/app/src/main.c",
+  "file": "/home/maximus/repositories/ENSC_351_LaserGallery/app/src/main.c",
+  "output": "app/CMakeFiles/ENSC351_GALLERY.dir/src/main.c.o"
+}
+]
