@@ -3,7 +3,7 @@
 
 static int SPI_FD = -1;
 
-pthread_mutex_t led_lock;
+pthread_mutex_t led_lock = PTHREAD_MUTEX_INITIALIZER;
 
 RGB LED_RINGS[RINGS] = {0};
 uint8_t frame[2 * RESET_BYTES + RINGS * PIXELS_PER_RING * 9] = {0};

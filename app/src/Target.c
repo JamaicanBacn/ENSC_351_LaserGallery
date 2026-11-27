@@ -11,6 +11,9 @@ uint64_t P2_points = 0;
 atomic_bool stop = false;
 
 
+static void *target_ir_worker(void *arg);
+
+
 void EntityInit( TargetEntity* target , IRReceiver* rec , LED* led_addr , wavedata_t* hit_sound , wavedata_t* activate_sound)
 {
     target->rec = rec;
@@ -24,6 +27,8 @@ void EntityInit( TargetEntity* target , IRReceiver* rec , LED* led_addr , waveda
     target->active = 0;
 
     target->PointValue = 10;
+
+    atomic_init(&target->worker_running, false);
 
     set_led(target->TargetNumber , BLUE);
 }
@@ -71,7 +76,6 @@ int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points 
     target->ir_result = NO_HIT;
 
     set_led(target->TargetNumber, RED);
-    update_leds();
     target->active = true;
     target->deadline_ms = monotonic_ms() + duration_ms;
 
@@ -88,7 +92,7 @@ int ActivateTarget(TargetEntity* target , uint64_t duration_ms , uint8_t points 
 
 }
 
-static void *ledWorker()
+void *ledWorker()
 {
     while( !stop )
     {
@@ -148,7 +152,6 @@ static void *target_ir_worker(void *arg)
  void DeactivateTarget(TargetEntity* target)
  {
     set_led(target->TargetNumber, BLUE);
-    update_leds();
     target->active = false;
  }
 
