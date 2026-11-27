@@ -27,6 +27,11 @@ typedef struct _Entity
     IRReceiver* rec;
     LED* led;
 
+    pthread_t ir_thread;
+    bool ir_thread_started;
+    uint64_t deadline_ms;
+    int ir_result;
+
 } TargetEntity;
 
 void EntityInit( TargetEntity* Entity, IRReceiver* rec , LED* led_addr , wavedata_t* hit_sound , wavedata_t* activate_sound);
