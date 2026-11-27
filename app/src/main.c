@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <inttypes.h>
 
 #define GPIO_PATH   "/dev/gpiochip2"
 #define SECOND 1000000
@@ -63,13 +64,39 @@ static void sleepForMs(long long delayInMs)
     nanosleep(&reqDelay, (struct timespec *) NULL);
 }
 
+void CollectWorkerThreads()
+{
+
+    // wait for each worker thread that is running to end before the program ends
+
+    for (int i = 0; i < RINGS; i++) {
+        while (atomic_load(&Targets[i].worker_running)) {
+            sleepForMs(10);
+        }
+    }
+}
+
+void CompleteGameClean()
+{
+    CollectWorkerThreads();
+    audio_cleanup();
+
+    for( int i  = 0; i < RINGS ; i++)
+    {
+        gpio_cleanup(&receivers[i].gpio);
+    }
+
+    END();
+}
+
 int main()
 {
  //make an array of the offsets for the rotary encoder
     uint32_t offsets[RINGS] = { gpiochip2_offsets.GPIO_18_OFFSET,
                                 gpiochip2_offsets.GPIO_15_OFFSET,
                                 gpiochip2_offsets.GPIO_14_OFFSET,
-                                gpiochip2_offsets.GPIO_17_OFFSET };
+                                gpiochip2_offsets.GPIO_17_OFFSET,
+                                gpiochip2_offsets.GPIO_12_OFFSET };
 
     //Init the gpiochup structure
 
@@ -101,13 +128,10 @@ int main()
 
     sleepForMs(5000);
 
-    printf(" FINAL SCORES : Player1 -> %lu , Player2 -> %lu ");
+   
 
-    led_close();
-    audio_cleanup();
+    printf(" FINAL SCORES : Player1 -> PRIu64 , Player2 -> %lu ");
 
-    for( int i  = 0; i < RINGS ; i++)
-    {
-        gpio_cleanup(&receivers[i].gpio);
-    }
+
+    CompleteGameClean();    
 }

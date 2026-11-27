@@ -2,6 +2,7 @@
 #include "audioMixer.h"
 #include "errno.h"
 #include "LED_RINGS.h"
+#include <stdatomic.h>
 
 pthread_mutex_t PointMutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -186,5 +187,6 @@ void END()
 
     stop = true;
     pthread_join(LedID , NULL);
+    led_close();
 
 }

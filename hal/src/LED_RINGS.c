@@ -43,6 +43,11 @@ void led_init()
         close(SPI_FD);
         exit(1);
     }
+
+    for( int i = 0; i < RINGS ; i++)
+    {
+        LED_RINGS[i].RING_NUMBER = i;
+    }
 }
 
 void set_led( int ring , RGB rgb )
